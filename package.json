@@ -4,10 +4,12 @@
   "private": true,
   "description": "Slide deck for a Kode59 talk — Agentisk Koding. Dev tooling only; the deck itself needs no build step.",
   "scripts": {
+    "start": "five-server --open=\"Agentisk Koding.html\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "five-server": "^0.3.1",
     "prettier": "^3.4.2"
   }
 }

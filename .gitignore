@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Claude Code — keep shared settings.json, skills, and hooks tracked;
+# ignore only personal/local overrides
+.claude/settings.local.json
+CLAUDE.local.md

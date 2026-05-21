@@ -1,0 +1,13 @@
+{
+  "name": "agentisk-koding",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slide deck for a Kode59 talk — Agentisk Koding. Dev tooling only; the deck itself needs no build step.",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}

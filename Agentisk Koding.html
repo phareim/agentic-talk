@@ -1,0 +1,2253 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8" />
+<title>Agentisk Koding — Hva nå?!</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<link rel="stylesheet" href="assets/miles.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Type scale @ 1920x1080 */
+    --type-display: 168px;
+    --type-title: 96px;
+    --type-h2: 72px;
+    --type-subtitle: 48px;
+    --type-body: 32px;
+    --type-small: 26px;
+    --type-tiny: 24px;
+
+    /* Spacing */
+    --pad-x: 120px;
+    --pad-top: 100px;
+    --pad-bottom: 100px;
+    --gap-title: 56px;
+    --gap-item: 32px;
+
+    /* Local aliases over Miles tokens */
+    --bg: var(--krem);
+    --ink: var(--burgunder);
+    --ink-soft: rgba(69, 13, 33, 0.72);
+    --ink-mute: rgba(69, 13, 33, 0.5);
+    --red: var(--miles-rod);
+    --warm: var(--gul);
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #1a1a1a;
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* Deck base */
+  deck-stage {
+    background: var(--bg);
+  }
+
+  section {
+    background: var(--bg);
+    color: var(--ink);
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Tiny corner watermarks on every slide */
+  section .mark-tl {
+    position: absolute;
+    top: 56px;
+    left: 56px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  section .mark-tr {
+    position: absolute;
+    top: 56px;
+    right: 56px;
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: 30px;
+    color: var(--red);
+  }
+  section .mark-br {
+    position: absolute;
+    bottom: 56px;
+    right: 56px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  /* Typography classes */
+  .display {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: var(--type-display);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .title {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: var(--type-title);
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .h2 {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: var(--type-h2);
+    line-height: 1.02;
+    letter-spacing: -0.012em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .subtitle {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: var(--type-subtitle);
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .body {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 400;
+    font-size: var(--type-body);
+    line-height: 1.4;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .small {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 400;
+    font-size: var(--type-small);
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .hand {
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+  }
+  .kicker {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: var(--type-tiny);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin: 0;
+  }
+  .accent { color: var(--red); }
+  .ink-soft { color: var(--ink-soft); }
+
+  /* Reusable layouts */
+  .center-stack {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  }
+  .left-stack {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    gap: var(--gap-title);
+  }
+  .top-stack {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    gap: var(--gap-title);
+  }
+  .split {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  }
+
+  /* PIE ICONS — the through-line from the whiteboard */
+  .pie {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .pie circle.ring { fill: none; stroke: currentColor; }
+  .pie path.slice { fill: currentColor; }
+
+  /* Inverse (burgunder) slides for section dividers */
+  section.inverse {
+    background: var(--burgunder);
+    color: var(--krem);
+  }
+  section.inverse .ink-soft { color: rgba(251, 240, 229, 0.7); }
+  section.inverse .kicker { color: var(--krem-warm, #f6e2c8); }
+
+  /* ============ Per-slide custom styles ============ */
+
+  /* Slide 1 — Title (Murakami homage) */
+  .s-title { 
+    background: #fdfdfa;
+    overflow: hidden;
+    --band-h: 280px;
+    --sun-size: 320px;
+    --sun-left: 220px;
+    --sun-top: 80px;
+    --sun-color: #ff303b;
+    --river-color: #0d0d0c;
+    --figure-visible: 1;
+  }
+  .cover-band {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--band-h);
+    background: #0d0d0c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 120px;
+    /* z-index intentionally omitted so band-name can lift above the sun */
+  }
+  .band-name {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 800;
+    font-size: 140px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #fdfdfa;
+    position: relative;
+    z-index: 3;
+  }
+  .band-tail {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(253, 253, 250, 0.75);
+    position: relative;
+    z-index: 3;
+  }
+  .cover-sun {
+    position: absolute;
+    top: var(--sun-top);
+    left: var(--sun-left);
+    width: var(--sun-size);
+    height: var(--sun-size);
+    z-index: 2;
+  }
+  .cover-sun circle { fill: var(--sun-color); }
+  /* The white horizon overlays the lower half of the sun, so the sun appears
+     to set behind the white background — matches the Murakami cover. */
+  .cover-horizon {
+    position: absolute;
+    top: var(--band-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fdfdfa;
+    z-index: 3;
+  }
+  .cover-river {
+    position: absolute;
+    top: var(--band-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(1080px - var(--band-h));
+    pointer-events: none;
+    z-index: 4;
+  }
+  .cover-figure {
+    position: absolute;
+    top: 560px;
+    left: 700px;
+    width: 60px;
+    height: 80px;
+    z-index: 5;
+    opacity: var(--figure-visible);
+  }
+  .cover-figure svg { width: 100%; height: 100%; }
+  .cover-title {
+    position: absolute;
+    right: 120px;
+    bottom: 220px;
+    margin: 0;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 800;
+    font-size: 96px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: #0d0d0c;
+    text-align: right;
+    text-wrap: balance;
+    z-index: 5;
+  }
+  .cover-title em {
+    font-style: normal;
+    color: var(--miles-rod);
+  }
+  .cover-subtitle {
+    position: absolute;
+    right: 120px;
+    bottom: 145px;
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: 44px;
+    color: var(--miles-rod);
+    transform: rotate(-1deg);
+    transform-origin: right;
+    z-index: 5;
+  }
+  .cover-publisher {
+    position: absolute;
+    right: 120px;
+    bottom: 80px;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 0.3em;
+    color: #0d0d0c;
+    z-index: 5;
+  }
+  .cover-publisher::before {
+    content: "";
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: #0d0d0c;
+    vertical-align: middle;
+    margin-right: 14px;
+    margin-bottom: 4px;
+  }
+
+  /* Slide 2 — Hei, jeg er */
+  .photo-slot {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background: var(--krem-warm, #f6e2c8);
+    border: 1.5px dashed rgba(69, 13, 33, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-mute);
+    font-family: "Kalam", cursive;
+    font-size: 24px;
+  }
+
+  /* Slide 3 — Agenda */
+  .agenda-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+  }
+  .agenda-card {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 44px 36px;
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.1);
+    border-radius: 12px;
+    min-height: 360px;
+  }
+  .agenda-num {
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: 36px;
+    color: var(--red);
+  }
+  .agenda-title {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 1.05;
+    margin-top: auto;
+  }
+
+  /* Section dividers */
+  .divider {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    align-items: center;
+    gap: 100px;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  }
+  .divider .pie-big {
+    width: 420px;
+    height: 420px;
+    color: var(--krem);
+  }
+  .divider .num-mark {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 56px;
+    color: var(--red);
+    margin-bottom: 24px;
+  }
+  .divider .section-title {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 128px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--krem);
+  }
+
+  /* Slide 5 — Timeline */
+  .timeline-track {
+    margin-top: auto;
+    padding: 40px 0 40px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: stretch;
+    position: relative;
+    height: 520px;
+  }
+  .timeline-track::before {
+    content: "";
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 360px;
+    height: 2px;
+    background: var(--ink);
+    opacity: 0.7;
+  }
+  .tl-node {
+    text-align: center;
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto; /* label fills upper half, year sits below line */
+    align-items: end;
+  }
+  .tl-node::after {
+    content: "";
+    position: absolute;
+    top: 360px;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--red);
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+  .tl-label {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.3;
+    color: var(--ink-soft);
+    padding-bottom: 40px; /* breathing room above line */
+  }
+  .tl-year {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1;
+    padding-top: 56px; /* push years uniformly below the line */
+  }
+  .tl-node.now .tl-year { color: var(--red); }
+  .tl-node.now::after {
+    width: 26px;
+    height: 26px;
+    box-shadow: 0 0 0 8px rgba(255, 48, 59, 0.18);
+  }
+
+  /* Slides 6-10 — Year slides */
+  .year-slide {
+    display: grid;
+    grid-template-columns: 0.9fr 1fr;
+    align-items: center;
+    gap: 80px;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    width: 100%;
+    height: 100%;
+  }
+  .year-slide .big-year {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 300px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .year-slide .big-year .accent { font-style: italic; }
+  .year-slide .story h2 {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 72px;
+    line-height: 1.0;
+    margin: 0 0 36px 0;
+    letter-spacing: -0.015em;
+  }
+  .year-slide .story p {
+    font-family: "DM Sans", sans-serif;
+    font-size: 30px;
+    line-height: 1.45;
+    margin: 0 0 22px 0;
+    color: var(--ink-soft);
+    max-width: 720px;
+  }
+  .year-slide .now-badge {
+    display: inline-block;
+    background: var(--red);
+    color: var(--krem);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 24px;
+  }
+
+  /* Slide 11 — Fra chat til agentisk (2x2) */
+  .quad {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 32px;
+    margin-top: auto;
+    height: 720px;
+  }
+  .quad-cell {
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.1);
+    border-radius: 12px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .quad-cell .qlabel {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 72px;
+    line-height: 1;
+  }
+  .quad-cell .qhint {
+    font-family: "DM Sans", sans-serif;
+    font-size: 24px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 420px;
+  }
+  .quad-cell.now {
+    background: var(--ink);
+    color: var(--krem);
+  }
+  .quad-cell.now .qhint { color: rgba(251, 240, 229, 0.75); }
+
+  /* Slide 12 — Modellene er gode nok (curve) */
+  .curve-wrap {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 80px;
+  }
+  .curve-wrap svg {
+    width: 100%;
+    height: auto;
+  }
+  .curve-wrap--full {
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+  }
+  .curve-wrap--full svg {
+    height: 100%;
+  }
+
+  /* Slide 13 — Ny kapabilitet → ny UX → ny prosess */
+  .hist-example {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 60px;
+    padding: 40px 20px 0;
+  }
+  .hist-file {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .hist-file__name {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 38px;
+    font-weight: 500;
+    color: var(--burgunder);
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.12);
+    border-radius: 8px;
+    padding: 18px 24px;
+    transform: rotate(-1.5deg);
+    box-shadow: 0 4px 12px rgba(69, 13, 33, 0.08);
+  }
+  .hist-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hist-target {
+    justify-self: start;
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 88px;
+    line-height: 1;
+    color: var(--red);
+    letter-spacing: -0.01em;
+  }
+  .three-cols {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr 80px 1fr;
+    align-items: center;
+    gap: 16px;
+    margin-top: 80px;
+    flex: 1;
+  }
+  .tnc {
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.1);
+    border-radius: 12px;
+    padding: 56px 44px;
+    text-align: center;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+  }
+  .tnc .ntag {
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: 32px;
+    color: var(--red);
+  }
+  .tnc .ntitle {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 56px;
+    line-height: 1.0;
+  }
+  .arrow-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+  }
+
+  /* Slide 15 — CLI FTW */
+  .s-cli {
+    background: var(--ink);
+    color: var(--krem);
+    height: 100%;
+  }
+  .s-cli .scrim {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    gap: 32px;
+  }
+  .s-cli .cli-mega {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 280px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+  .s-cli .cli-mega .red { color: var(--red); }
+
+  /* Slide 16 — Kom i gang (terminal) */
+  .terminal {
+    background: #1d1814;
+    border-radius: 16px;
+    padding: 56px 64px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    box-shadow: 0 28px 60px rgba(69, 13, 33, 0.25);
+    max-width: 1100px;
+    margin: auto;
+    width: 100%;
+  }
+  .terminal .tdots {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .terminal .tdots span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3a3027;
+  }
+  .terminal .tdots span:nth-child(1) { background: #ff5f57; }
+  .terminal .tdots span:nth-child(2) { background: #febc2e; }
+  .terminal .tdots span:nth-child(3) { background: #28c840; }
+  .terminal .line {
+    color: #f6e2c8;
+    font-size: 32px;
+    line-height: 1.7;
+    white-space: nowrap;
+  }
+  .terminal .prompt { color: var(--red); margin-right: 14px; }
+  .terminal .comment { color: #897569; font-style: italic; }
+
+  /* Slide 17 — Kontekst er alt */
+  .kontekst-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 36px 80px;
+    margin-top: 40px;
+  }
+  .kctx {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 36px 36px;
+    background: #fffaf2;
+    border-radius: 12px;
+    border-left: 4px solid var(--red);
+  }
+  .kctx .knum {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 56px;
+    color: var(--red);
+    line-height: 1;
+    flex: 0 0 auto;
+  }
+  .kctx h3 {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 1;
+    margin: 0 0 14px;
+  }
+  .kctx p {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* Slide 18 — Memory split */
+  .mem-card {
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.1);
+    border-radius: 16px;
+    padding: 64px 56px;
+    height: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
+  }
+  .mem-card.dark {
+    background: var(--ink);
+    color: var(--krem);
+  }
+  .mem-card.dark h3, .mem-card.dark p, .mem-card.dark li { color: var(--krem); }
+  .mem-card.dark .small { color: rgba(251, 240, 229, 0.72); }
+  .mem-tag {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+  .mem-card.dark .mem-tag { color: var(--gul, #ffd9a1); }
+  .mem-card h3 {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 72px;
+    line-height: 0.95;
+    margin: 0;
+  }
+  .mem-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: auto;
+  }
+  .mem-card li {
+    font-family: "DM Sans", sans-serif;
+    font-size: 26px;
+    line-height: 1.4;
+    padding-left: 28px;
+    position: relative;
+  }
+  .mem-card li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+  }
+
+  /* Slide 19 — Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    margin-top: 40px;
+  }
+  .skill-tree {
+    background: #1d1814;
+    color: #f6e2c8;
+    border-radius: 12px;
+    padding: 44px 48px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 26px;
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+  }
+  .skill-tree .ln { white-space: pre; }
+  .skill-tree .ln .cm { color: #897569; }
+  .skill-tree .ln .dir { color: #f6c98f; }
+  .skill-tree .ln .file { color: #e8d8c4; }
+  .skill-tree .ln .focus { color: var(--red); font-weight: 700; }
+
+  /* Slide 21 — Fire steg i loopen (redesigned) */
+  .fourstep {
+    position: relative;
+    flex: 1;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 40px;
+  }
+  .fourstep .arc {
+    position: absolute;
+    top: 0;
+    left: 110px;
+    right: 110px;
+    height: 220px;
+    color: var(--ink);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .fourstep .arc-label {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 52px;
+    color: var(--red);
+    background: var(--bg);
+    padding: 0 26px;
+    z-index: 2;
+    line-height: 1;
+  }
+  .fourstep .nodes {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    align-items: center;
+    margin-top: 220px;
+  }
+  .fnode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  .fnode .fdot {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--krem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 132px;
+    line-height: 1;
+    box-shadow: 6px 8px 0 rgba(69, 13, 33, 0.16);
+  }
+  .fnode:nth-child(1) .fdot { transform: rotate(-2.5deg); }
+  .fnode:nth-child(3) .fdot { transform: rotate(1.5deg); }
+  .fnode:nth-child(5) .fdot { transform: rotate(-1deg); }
+  .fnode:nth-child(7) .fdot { transform: rotate(2deg); }
+  .fnode .fname {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 54px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .farrow {
+    width: 90px;
+    height: 50px;
+    color: var(--ink);
+    opacity: 0.6;
+  }
+
+  /* Slides 22-23 (two-up steps) */
+  .twoup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 40px;
+    flex: 1;
+  }
+  .step-card {
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.1);
+    border-radius: 16px;
+    padding: 56px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .step-card .stag {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .step-card .snum {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 64px;
+    color: var(--red);
+    line-height: 0.9;
+  }
+  .step-card .sname {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1;
+  }
+  .step-card p {
+    font-family: "DM Sans", sans-serif;
+    font-size: 27px;
+    line-height: 1.45;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .step-card .quote {
+    font-family: "Caveat", cursive;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1.5px solid rgba(69, 13, 33, 0.12);
+  }
+
+  /* Tweet cards (Karpathy slide) */
+  .tweet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 24px;
+    flex: 1;
+  }
+  .tweet {
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.12);
+    border-radius: 20px;
+    padding: 44px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-shadow: 0 4px 12px rgba(69, 13, 33, 0.05);
+    position: relative;
+  }
+  .tweet.now {
+    background: var(--ink);
+    color: var(--krem);
+    border-color: transparent;
+  }
+  .tweet.now .body-q, .tweet.now .avatar, .tweet.now .name { color: var(--krem); }
+  .tweet .head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .tweet .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--krem-warm, #f6e2c8);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 600;
+    font-size: 28px;
+    flex: 0 0 64px;
+  }
+  .tweet.now .avatar { background: var(--gul, #ffd9a1); }
+  .tweet .who {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .tweet .name {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+  }
+  .tweet .handle {
+    font-family: "DM Sans", sans-serif;
+    font-size: 24px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .tweet.now .handle { color: rgba(251, 240, 229, 0.6); }
+  .tweet .date {
+    margin-left: auto;
+    font-family: "DM Sans", sans-serif;
+    font-size: 24px;
+    color: var(--ink-soft);
+  }
+  .tweet.now .date { color: rgba(251, 240, 229, 0.6); }
+  .tweet .body-q {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.32;
+    text-wrap: pretty;
+  }
+  .tweet .body-q .term {
+    background: linear-gradient(transparent 55%, rgba(255, 48, 59, 0.25) 55%);
+    font-style: italic;
+    font-weight: 500;
+    padding: 0 4px;
+  }
+  .tweet.now .body-q .term {
+    background: linear-gradient(transparent 55%, rgba(255, 217, 161, 0.32) 55%);
+    color: var(--gul, #ffd9a1);
+  }
+  .tweet .arrow-between {
+    /* purely decorative — sits as a sibling */
+  }
+  .tweet-bridge {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 24px);
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: var(--krem);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 36px;
+    border: 2px solid var(--red);
+    z-index: 2;
+  }
+
+  /* New CSS for added slides (læring, manifesto, loops, kode-spørsmål, up/down, fri meg) */
+
+  /* Slide: Vi mister læring */
+  .reframe {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 32px;
+    align-items: stretch;
+    margin-top: 40px;
+    flex: 1;
+  }
+  .reframe-card {
+    background: #fffaf2;
+    border: 1px solid rgba(69, 13, 33, 0.12);
+    border-radius: 16px;
+    padding: 56px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    min-height: 540px;
+  }
+  .reframe-card .rtag {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .reframe-card.ans {
+    background: var(--ink);
+    color: var(--krem);
+  }
+  .reframe-card.ans h3 { color: var(--krem); }
+  .reframe-card.ans .rtag { color: var(--gul, #ffd9a1); }
+  .reframe-card h3 {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 56px;
+    line-height: 1.05;
+    margin: 0;
+  }
+  .reframe-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Slide: Agile manifesto */
+  .manifesto {
+    background: var(--krem-warm, #f6e2c8);
+  }
+
+  /* Slide: Tre løkker (nested rings) */
+  .loops-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+    margin-top: 40px;
+    flex: 1;
+  }
+  .loop-rings {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .loop-rings svg { width: 100%; height: 100%; }
+  .loops-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .lrow {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 20px 28px;
+    border-radius: 12px;
+    border: 1px solid rgba(69, 13, 33, 0.12);
+    background: #fffaf2;
+  }
+  .lrow.mid {
+    background: var(--ink);
+    color: var(--krem);
+    border-color: transparent;
+    box-shadow: 0 8px 24px rgba(69, 13, 33, 0.15);
+  }
+  .lrow .lswatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    flex: 0 0 22px;
+  }
+  .lrow .ltext { display: flex; flex-direction: column; gap: 4px; }
+  .lrow .ltag {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .lrow.mid .ltag { color: var(--gul, #ffd9a1); }
+  .lrow .lname {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 1;
+  }
+
+  /* Slide: Up-skilling / down-skilling */
+  .updown {
+    display: grid;
+    grid-template-rows: 1fr 80px 1fr;
+    height: 100%;
+    width: 100%;
+  }
+  .ud-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 800;
+    font-size: 220px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+  .ud-side.up {
+    background: var(--ink);
+    color: var(--krem);
+  }
+  .ud-side.down {
+    background: var(--krem);
+    color: var(--ink);
+  }
+  .ud-or {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--miles-rod);
+    color: var(--krem);
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 56px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Slide: Fri meg fra tastaturet */
+  .fri-meg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    gap: 36px;
+    text-align: center;
+    background: radial-gradient(circle at 50% 35%, #fef5ea 0%, var(--krem) 65%);
+  }
+  .fri-meg .heart-big {
+    font-family: "DM Sans", sans-serif;
+    font-size: 72px;
+    color: var(--miles-rod);
+    line-height: 1;
+  }
+  .fri-meg .frase {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 200px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .fri-meg .frase em {
+    font-style: italic;
+    color: var(--miles-rod);
+  }
+  .fri-meg .epi {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 40px;
+    line-height: 1.35;
+    color: var(--ink-soft);
+    max-width: 1200px;
+    margin-top: 8px;
+  }
+
+  /* Slide 25 — Det vi ikke vet */
+  .closing {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--pad-top) 200px var(--pad-bottom);
+    gap: 56px;
+  }
+  .closing .pull {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 84px;
+    line-height: 1.05;
+    letter-spacing: -0.012em;
+    max-width: 1500px;
+    text-wrap: balance;
+  }
+  .closing .pull .accent { font-style: normal; }
+  .closing .sig {
+    font-family: "DM Sans", sans-serif;
+    font-size: 28px;
+    color: var(--ink-soft);
+    margin-top: 16px;
+  }
+
+  /* Slide 26 — Takk */
+  .thanks {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    gap: 48px;
+    text-align: center;
+    background: radial-gradient(circle at 50% 60%, #fef5ea 0%, var(--krem) 65%);
+  }
+  .thanks .heart {
+    color: var(--red);
+    font-size: 64px;
+  }
+  .thanks .mega {
+    font-family: "Gelica", Georgia, serif;
+    font-weight: 500;
+    font-size: 280px;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+  }
+  .thanks .scrawl {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 88px;
+    color: var(--red);
+    transform: rotate(-2deg);
+  }
+  .thanks .contact {
+    display: flex;
+    gap: 48px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 28px;
+    color: var(--ink-soft);
+    margin-top: 24px;
+  }
+
+  /* Decorative pie SVG sizing helpers */
+  .pie-sm { width: 36px; height: 36px; }
+  .pie-md { width: 72px; height: 72px; }
+  .pie-lg { width: 120px; height: 120px; }
+
+  /* Hand-drawn arrow for slide 13 */
+  .h-arrow { stroke: var(--ink); fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080" data-om-id="21bf206b:9" style="--deck-rail-w: 188px;">
+
+  <!-- ============================================================ -->
+  <!-- 1 · TITLE (Murakami homage — "What I Talk About When I Talk About…") -->
+  <!-- ============================================================ -->
+  <section data-label="01 Tittel" class="s-title" data-om-id="21bf206b:10" data-screen-label="01 01 Tittel" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="0" data-deck-active="" style="--band-h: 280px; --sun-size: 320px; --sun-left: 220px; --sun-top: 80px; --sun-color: #ff303b; --river-color: #0d0d0c; --figure-visible: 1;">
+    <!-- Black top band -->
+    <div class="cover-band" data-om-id="21bf206b:11">
+      <span class="band-name" style="font-size: 160px;" data-om-id="21bf206b:12">KODE 59</span>
+      <span class="band-tail" data-om-id="21bf206b:13">Haugesund Folkebibliotek · 21. mai 2026</span>
+    </div>
+
+    <!-- Red rising sun -->
+    <svg class="cover-sun" viewBox="0 0 100 100" data-om-id="21bf206b:14">
+      <circle cx="50" cy="50" r="50" fill="#ff303b" data-om-id="21bf206b:15"></circle>
+    </svg>
+
+    <!-- White horizon overlays the lower half of the sun -->
+    <div class="cover-horizon" data-om-id="21bf206b:16"></div>
+
+    <!-- Wavy black river snaking down (starts in white area, never enters black band) -->
+    <svg class="cover-river" viewBox="0 0 1920 800" preserveAspectRatio="none" data-om-id="21bf206b:17">
+      <path d="M 380 0
+               C 360 100 480 160 440 260
+               C 400 360 280 420 360 520
+               C 440 620 580 580 540 700
+               C 510 760 580 800 600 800
+               L 720 800
+               C 720 760 660 720 700 660
+               C 740 580 820 580 780 480
+               C 740 380 600 400 640 320
+               C 680 240 800 240 760 140
+               C 740 80 660 40 600 0
+               Z" fill="var(--river-color)" data-om-id="21bf206b:18"></path>
+    </svg>
+
+    <!-- Lone figure beside the river (like the tiny tree on the Murakami cover) -->
+    <div class="cover-figure" data-om-id="21bf206b:19">
+      <svg viewBox="0 0 60 80" data-om-id="21bf206b:20">
+        <circle cx="30" cy="12" r="9" fill="#0d0d0c" data-om-id="21bf206b:21"></circle>
+        <path d="M 22 24 L 38 24 L 42 58 L 18 58 Z" fill="#0d0d0c" data-om-id="21bf206b:22"></path>
+        <rect x="12" y="46" width="36" height="12" rx="2" fill="#0d0d0c" data-om-id="21bf206b:23"></rect>
+        <rect x="15" y="49" width="30" height="6" fill="#fdfdfa" opacity="0.9" data-om-id="21bf206b:24"></rect>
+        <path d="M 26 58 L 24 70 M 34 58 L 36 70" stroke="#0d0d0c" stroke-width="3" stroke-linecap="round" data-om-id="21bf206b:25"></path>
+      </svg>
+    </div>
+
+    <!-- Title (Vintage-style stacked sans, bottom-right) -->
+    <h1 class="cover-title" data-om-id="21bf206b:26">
+      HVA JEG SNAKKER<br data-om-id="21bf206b:27">
+      OM NÅR JEG<br data-om-id="21bf206b:28">
+      SNAKKER OM<br data-om-id="21bf206b:29">
+      <em data-om-id="21bf206b:30">KODE</em>
+    </h1>
+
+    <!-- Handwritten subtitle -->
+    <div class="cover-subtitle" data-om-id="21bf206b:31">Agentisk koding — Hva nå?!</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 2 · Hei, jeg er… (placeholder) -->
+  <!-- ============================================================ -->
+  <section data-label="02 Hei jeg er" data-om-id="21bf206b:32" data-screen-label="02 02 Hei jeg er" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="1">
+    <div class="mark-tl" data-om-id="21bf206b:33"></div>
+    <div class="mark-br" data-om-id="21bf206b:34">Miles</div>
+    <div class="split" style="grid-template-columns: 0.7fr 1fr; gap: 100px;" data-om-id="21bf206b:35">
+      <image-slot id="speaker-photo" shape="rounded" radius="16" placeholder="Slipp et bilde av deg her" style="width: 420px; height: 540px;" data-om-id="21bf206b:36" data-editable="" data-filled=""></image-slot>
+      <div style="display:flex; flex-direction:column; gap:32px;" data-om-id="21bf206b:37">
+<h2 class="title" data-om-id="21bf206b:38">Petter Hareim</h2>
+        <p class="hand" style="font-size: 40px; color: var(--ink-soft);" data-om-id="21bf206b:39">Miles · Fagtjener · Haugesund</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 3 · Agenda -->
+  <!-- ============================================================ -->
+  <section data-label="03 Agenda" data-om-id="21bf206b:40" data-screen-label="03 03 Agenda" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="2">
+    <div class="mark-tl" data-om-id="21bf206b:41">HVA JEG SNAKKER OM NÅR JEG SNAKKER OM KODE</div>
+    <div class="mark-br" data-om-id="21bf206b:42">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:43">
+      <div data-om-id="21bf206b:44">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:45">Agenda</h2>
+      </div>
+      <div class="agenda-grid" data-om-id="21bf206b:46">
+        <div class="agenda-card" data-om-id="21bf206b:47">
+          <svg class="pie pie-lg" viewBox="0 0 100 100" style="color: var(--ink);" data-om-id="21bf206b:48">
+            <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:49"></circle>
+            <path class="slice" d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" data-om-id="21bf206b:50"></path>
+          </svg>
+          <div class="agenda-num" data-om-id="21bf206b:51">01</div>
+          <div class="agenda-title" data-om-id="21bf206b:52">Historie<br data-om-id="21bf206b:53"></div>
+        </div>
+        <div class="agenda-card" data-om-id="21bf206b:54">
+          <svg class="pie pie-lg" viewBox="0 0 100 100" style="color: var(--ink);" data-om-id="21bf206b:55">
+            <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:56"></circle>
+            <path class="slice" d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" data-om-id="21bf206b:57"></path>
+            <path class="slice" d="M96 50 A46 46 0 0 1 50 96 L50 50 Z" data-om-id="21bf206b:58"></path>
+          </svg>
+          <div class="agenda-num" data-om-id="21bf206b:59">02</div>
+          <div class="agenda-title" data-om-id="21bf206b:60">Kom i gang<br data-om-id="21bf206b:61"></div>
+        </div>
+        <div class="agenda-card" data-om-id="21bf206b:62">
+          <svg class="pie pie-lg" viewBox="0 0 100 100" style="color: var(--ink);" data-om-id="21bf206b:63">
+            <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:64"></circle>
+            <path class="slice" d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" data-om-id="21bf206b:65"></path>
+            <path class="slice" d="M96 50 A46 46 0 0 1 50 96 L50 50 Z" data-om-id="21bf206b:66"></path>
+            <path class="slice" d="M50 96 A46 46 0 0 1 4 50 L50 50 Z" data-om-id="21bf206b:67"></path>
+          </svg>
+          <div class="agenda-num" data-om-id="21bf206b:68">03</div>
+          <div class="agenda-title" data-om-id="21bf206b:69">Agile &amp; AI</div>
+        </div>
+        <div class="agenda-card" data-om-id="21bf206b:70">
+          <svg class="pie pie-lg" viewBox="0 0 100 100" style="color: var(--ink);" data-om-id="21bf206b:71">
+            <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:72"></circle>
+            <circle cx="50" cy="50" r="46" fill="currentColor" data-om-id="21bf206b:73"></circle>
+          </svg>
+          <div class="agenda-num" data-om-id="21bf206b:74">04</div>
+          <div class="agenda-title" data-om-id="21bf206b:75"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 4 · DEL 1 — Historie & bakgrunn (divider) -->
+  <!-- ============================================================ -->
+  <section data-label="04 Del 1 — Historie" class="inverse" data-om-id="21bf206b:76" data-screen-label="04 04 Del 1 — Historie" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="3">
+    <div class="divider" data-om-id="21bf206b:77">
+      <svg class="pie pie-big" viewBox="0 0 100 100" data-om-id="21bf206b:78">
+        <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:79"></circle>
+        <path class="slice" d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" data-om-id="21bf206b:80"></path>
+      </svg>
+      <div data-om-id="21bf206b:81">
+        <div class="num-mark" data-om-id="21bf206b:82"></div>
+        <h2 class="section-title" data-om-id="21bf206b:83">Historie<br data-om-id="21bf206b:84">&amp; bakgrunn.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 5 · Tidslinjen -->
+  <!-- ============================================================ -->
+  <section data-label="05 Tidslinjen" data-om-id="21bf206b:85" data-screen-label="05 05 Tidslinjen" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="4">
+    <div class="mark-tl" data-om-id="21bf206b:86">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:87">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:88">
+      <div data-om-id="21bf206b:89">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:90">En tidslinje i fem punkter.</h2>
+      </div>
+      <div class="timeline-track" data-om-id="21bf206b:91">
+        <div class="tl-node" data-om-id="21bf206b:92">
+          <div class="tl-label" data-om-id="21bf206b:93"><em data-om-id="21bf206b:94">Attention is<br data-om-id="21bf206b:95">all you need</em></div>
+          <div class="tl-year" data-om-id="21bf206b:96">2017</div>
+        </div>
+        <div class="tl-node" data-om-id="21bf206b:97">
+          <div class="tl-label" data-om-id="21bf206b:98">ChatGPT</div>
+          <div class="tl-year" data-om-id="21bf206b:99">2022</div>
+        </div>
+        <div class="tl-node" data-om-id="21bf206b:100">
+          <div class="tl-label" data-om-id="21bf206b:101">Tool-use</div>
+          <div class="tl-year" data-om-id="21bf206b:102">2024</div>
+        </div>
+        <div class="tl-node" data-om-id="21bf206b:103">
+          <div class="tl-label" data-om-id="21bf206b:104">Claude Code<br data-om-id="21bf206b:105">· Vibe coding</div>
+          <div class="tl-year" data-om-id="21bf206b:106">2025</div>
+        </div>
+        <div class="tl-node now" data-om-id="21bf206b:107">
+          <div class="tl-label" style="color: var(--red); font-weight: 600;" data-om-id="21bf206b:108">Hva nå..?</div>
+          <div class="tl-year" data-om-id="21bf206b:109">2026</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 6 · 2017 — Attention -->
+  <!-- ============================================================ -->
+  <section data-label="06 2017 Attention" data-om-id="21bf206b:110" data-screen-label="06 06 2017 Attention" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="5">
+    <div class="mark-tl" data-om-id="21bf206b:111">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:112">Miles</div>
+    <div class="year-slide" data-om-id="21bf206b:113">
+      <div class="big-year" data-om-id="21bf206b:114">2017</div>
+      <div class="story" data-om-id="21bf206b:115">
+<h2 data-om-id="21bf206b:116"><em data-om-id="21bf206b:117">Attention is</em><br data-om-id="21bf206b:118">all you need.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 7 · 2022 — ChatGPT -->
+  <!-- ============================================================ -->
+  <section data-label="07 2022 ChatGPT" data-om-id="21bf206b:119" data-screen-label="07 07 2022 ChatGPT" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="6">
+    <div class="mark-tl" data-om-id="21bf206b:120">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:121">Miles</div>
+    <div class="year-slide" data-om-id="21bf206b:122">
+      <div class="big-year" data-om-id="21bf206b:123">2022</div>
+      <div class="story" data-om-id="21bf206b:124">
+<h2 data-om-id="21bf206b:125">ChatGPT<br data-om-id="21bf206b:126">treffer alle.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 8 · 2024 — Tool-use -->
+  <!-- ============================================================ -->
+  <section data-label="08 2024 Tool-use" data-om-id="21bf206b:127" data-screen-label="08 08 2024 Tool-use" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="7">
+    <div class="mark-tl" data-om-id="21bf206b:128">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:129">Miles</div>
+    <div class="year-slide" data-om-id="21bf206b:130">
+      <div class="big-year" data-om-id="21bf206b:131">2024</div>
+      <div class="story" data-om-id="21bf206b:132">
+<h2 data-om-id="21bf206b:133">Modellen får<br data-om-id="21bf206b:134">verktøy.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 9 · 2025 — Claude Code & vibe coding -->
+  <!-- ============================================================ -->
+  <section data-label="09 2025 Claude Code" data-om-id="21bf206b:135" data-screen-label="09 09 2025 Claude Code" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="8">
+    <div class="mark-tl" data-om-id="21bf206b:136">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:137">Miles</div>
+    <div class="year-slide" data-om-id="21bf206b:138">
+      <div class="big-year" data-om-id="21bf206b:139">2025</div>
+      <div class="story" data-om-id="21bf206b:140">
+<h2 data-om-id="21bf206b:141">Claude Code<br data-om-id="21bf206b:142">&amp; vibe coding.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 10 · Karpathy: vibe coding → agentic engineering -->
+  <!-- ============================================================ -->
+  <section data-label="10 Karpathy 2025 til 2026" data-om-id="21bf206b:143" data-screen-label="10 10 Karpathy 2025 til 2026" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="9">
+    <div class="mark-tl" data-om-id="21bf206b:144">Del 1 · Historie</div>
+    <div class="mark-tr" data-om-id="21bf206b:145">
+</div>
+    <div class="top-stack" data-om-id="21bf206b:146">
+      <div data-om-id="21bf206b:147">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:148">
+</h2>
+      </div>
+      <div class="tweet-grid" data-om-id="21bf206b:149">
+        <div class="tweet" data-om-id="21bf206b:150">
+          <div class="head" data-om-id="21bf206b:151">
+            <div class="avatar" data-om-id="21bf206b:152">AK</div>
+            <div class="who" data-om-id="21bf206b:153">
+              <span class="name" data-om-id="21bf206b:154">Andrej Karpathy</span>
+              <span class="handle" data-om-id="21bf206b:155">@karpathy</span>
+            </div>
+            <span class="date" data-om-id="21bf206b:156">Feb 2, 2025</span>
+          </div>
+          <p class="body-q" data-om-id="21bf206b:157">
+            There's a new kind of coding I call <span class="term" data-om-id="21bf206b:158">«vibe coding»</span>,
+            where you fully give in to the vibes, embrace exponentials,
+            and forget that the code even exists.
+          </p>
+        </div>
+        <div class="tweet now" data-om-id="21bf206b:159">
+          <div class="head" data-om-id="21bf206b:160">
+            <div class="avatar" data-om-id="21bf206b:161">AK</div>
+            <div class="who" data-om-id="21bf206b:162">
+              <span class="name" data-om-id="21bf206b:163">Andrej Karpathy</span>
+              <span class="handle" data-om-id="21bf206b:164">@karpathy</span>
+            </div>
+            <span class="date" data-om-id="21bf206b:165">Feb 4, 2026</span>
+          </div>
+          <p class="body-q" data-om-id="21bf206b:166">
+            My current favourite term: <span class="term" data-om-id="21bf206b:167">«agentic engineering»</span>.
+            «Agentic» because the new default is that you are
+            <strong data-om-id="21bf206b:168">not writing the code directly 99% of the time</strong>,
+            you are orchestrating agents who do and acting as oversight.
+            «Engineering» to emphasise that there is an art &amp; science and expertise to it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 11 · 2026 — Hva nå -->
+  <!-- ============================================================ -->
+  <section data-label="10 2026 Hva nå" data-om-id="21bf206b:169" data-screen-label="11 10 2026 Hva nå" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="10">
+    <div class="mark-tl" data-om-id="21bf206b:170">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:171">Miles</div>
+    <div class="year-slide" data-om-id="21bf206b:172">
+      <div class="big-year" data-om-id="21bf206b:173"><span class="accent" data-om-id="21bf206b:174">2026</span></div>
+      <div class="story" data-om-id="21bf206b:175">
+<h2 data-om-id="21bf206b:176">Hva nå..?</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 11 · Fra chat til agentisk -->
+  <!-- ============================================================ -->
+  <section data-label="12 Modellene er gode nok" data-om-id="21bf206b:197" data-screen-label="13 12 Modellene er gode nok" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="12">
+    <div class="mark-tl" data-om-id="21bf206b:198">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:199">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:200">
+      <div data-om-id="21bf206b:201">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:202">Modellene er <span class="accent" data-om-id="21bf206b:203">gode nok</span>.</h2>
+      </div>
+      <div class="curve-wrap curve-wrap--full" data-om-id="21bf206b:204">
+        <svg viewBox="0 0 1200 360" preserveAspectRatio="none" style="width: 100%; height: 100%;" data-om-id="21bf206b:205">
+          <!-- axes -->
+          <line x1="40" y1="320" x2="1180" y2="320" stroke="var(--ink)" stroke-width="2" opacity="0.4" vector-effect="non-scaling-stroke" data-om-id="21bf206b:206"></line>
+          <line x1="40" y1="40" x2="40" y2="320" stroke="var(--ink)" stroke-width="2" opacity="0.4" vector-effect="non-scaling-stroke" data-om-id="21bf206b:207"></line>
+          <!-- gode-nok line -->
+          <line x1="40" y1="170" x2="1180" y2="170" stroke="var(--red)" stroke-width="2" stroke-dasharray="6 6" vector-effect="non-scaling-stroke" data-om-id="21bf206b:208"></line>
+          <!-- curve -->
+          <path d="M 40 320 C 320 318, 600 308, 780 270 S 1020 170, 1180 70" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke" data-om-id="21bf206b:209"></path>
+          <!-- now dot — sits just above the red dashed «gode nok»-line -->
+          <circle cx="1020" cy="158" r="12" fill="var(--miles-rod)" data-om-id="21bf206b:210"></circle>
+          <circle cx="1020" cy="158" r="20" fill="var(--miles-rod)" opacity="0.18" data-om-id="21bf206b:211"></circle>
+        </svg>
+      </div>
+    </div>
+  </section><section data-label="11 Fra chat til agentisk" data-om-id="21bf206b:177" data-screen-label="12 11 Fra chat til agentisk" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="11">
+    <div class="mark-tl" data-om-id="21bf206b:178">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:179">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:180">
+      <div data-om-id="21bf206b:181">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:182">Fra chat <em class="ink-soft" data-om-id="21bf206b:183">til</em> agentisk.</h2>
+      </div>
+      <div class="quad" data-om-id="21bf206b:184">
+        <div class="quad-cell" data-om-id="21bf206b:185">
+          <span class="kicker" style="color: var(--ink-mute);" data-om-id="21bf206b:186">Modus 1</span>
+          <div class="qlabel" data-om-id="21bf206b:187">Chat</div>
+        </div>
+        <div class="quad-cell" data-om-id="21bf206b:188">
+          <span class="kicker" style="color: var(--ink-mute);" data-om-id="21bf206b:189">Modus 2</span>
+          <div class="qlabel" data-om-id="21bf206b:190">Tab complete</div>
+        </div>
+        <div class="quad-cell" data-om-id="21bf206b:191">
+          <span class="kicker" style="color: var(--ink-mute);" data-om-id="21bf206b:192">Modus 3</span>
+          <div class="qlabel" data-om-id="21bf206b:193">Vibes</div>
+        </div>
+        <div class="quad-cell now" data-om-id="21bf206b:194">
+          <span class="kicker" style="color: var(--gul, #ffd9a1);" data-om-id="21bf206b:195"></span>
+          <div class="qlabel" data-om-id="21bf206b:196">Agentisk</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 12 · Modellene er gode nok -->
+  <!-- ============================================================ -->
+  
+
+  <!-- ============================================================ -->
+  <!-- 13 · Ny kapabilitet → ny UX → ny prosess -->
+  <!-- ============================================================ -->
+  <section data-label="13 Ny kapabilitet → ny UX → ny prosess" data-om-id="21bf206b:212" data-screen-label="14 13 Ny kapabilitet → ny UX → ny prosess" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="13">
+    <div class="mark-tl" data-om-id="21bf206b:213">Del 1 · Historie</div>
+    <div class="mark-br" data-om-id="21bf206b:214">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:215">
+      <div data-om-id="21bf206b:216">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:217">Ny kapabilitet <em class="ink-soft" data-om-id="21bf206b:218">→</em> ny UX <em class="ink-soft" data-om-id="21bf206b:219">→</em> ny prosess</h2>
+      </div>
+      <div class="hist-example" data-om-id="21bf206b:220">
+        <div class="hist-file" data-om-id="21bf206b:221">
+          <div class="hist-file__name" data-om-id="21bf206b:222">Dokument4_FINAL_omsider_2.doc</div>
+        </div>
+        <div class="hist-arrow" data-om-id="21bf206b:223">
+          <svg width="160" height="60" viewBox="0 0 160 60" data-om-id="21bf206b:224">
+            <path class="h-arrow" d="M10 30 C 50 14, 110 46, 150 30" data-om-id="21bf206b:225"></path>
+            <path class="h-arrow" d="M138 21 L152 30 L138 39" data-om-id="21bf206b:226"></path>
+          </svg>
+        </div>
+        <div class="hist-target" data-om-id="21bf206b:227">Google Docs</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 14 · DEL 2 — Getting started -->
+  <!-- ============================================================ -->
+  <section data-label="14 Del 2 — Getting started" class="inverse" data-om-id="21bf206b:228" data-screen-label="15 14 Del 2 — Getting started" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="14">
+    <div class="divider" data-om-id="21bf206b:229">
+      <svg class="pie pie-big" viewBox="0 0 100 100" data-om-id="21bf206b:230">
+        <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:231"></circle>
+        <path class="slice" d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" data-om-id="21bf206b:232"></path>
+        <path class="slice" d="M96 50 A46 46 0 0 1 50 96 L50 50 Z" data-om-id="21bf206b:233"></path>
+      </svg>
+      <div data-om-id="21bf206b:234">
+        <div class="num-mark" data-om-id="21bf206b:235">Del 2 av 4</div>
+        <h2 class="section-title" data-om-id="21bf206b:236">Getting<br data-om-id="21bf206b:237">started.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 15 · CLI FTW -->
+  <!-- ============================================================ -->
+  <section data-label="15 CLI FTW" class="s-cli" data-om-id="21bf206b:238" data-screen-label="16 15 CLI FTW" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="15">
+    <div class="mark-tl" style="color: rgba(251, 240, 229, 0.5);" data-om-id="21bf206b:239">Del 2 · Getting started</div>
+    <div class="mark-br" style="color: rgba(251, 240, 229, 0.5);" data-om-id="21bf206b:240">Miles</div>
+    <div class="scrim" data-om-id="21bf206b:241">
+      <p class="hand" style="font-size: 48px; color: var(--gul, #ffd9a1);" data-om-id="21bf206b:242">Hot take:</p>
+      <div class="cli-mega" data-om-id="21bf206b:243">CLI <span class="red" data-om-id="21bf206b:244">FTW</span>.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 16 · Kom i gang -->
+  <!-- ============================================================ -->
+  <section data-label="16 Kom i gang" data-om-id="21bf206b:245" data-screen-label="17 16 Kom i gang" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="16">
+    <div class="mark-tl" data-om-id="21bf206b:246">Del 2 · Getting started</div>
+    <div class="mark-br" data-om-id="21bf206b:247">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:248">
+      <div data-om-id="21bf206b:249">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:250"> <em class="ink-soft" data-om-id="21bf206b:251"></em></h2>
+      </div>
+      <div class="terminal" data-om-id="21bf206b:252">
+        <div class="tdots" data-om-id="21bf206b:253"><span data-om-id="21bf206b:254"></span><span data-om-id="21bf206b:255"></span><span data-om-id="21bf206b:256"></span></div>
+        <div class="line" data-om-id="21bf206b:257">$curl -fsSL https://claude.ai/install.sh | bash</div>
+        <div class="line" data-om-id="21bf206b:258"><span class="prompt" data-om-id="21bf206b:259">$</span>claude</div>
+        <div class="line" style="margin-top: 16px; color: #897569; font-size: 26px;" data-om-id="21bf206b:260">
+          <span class="comment" data-om-id="21bf206b:261"># ... også må du logge inn da. Men så: Let's go!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 17 · Kontekst er alt -->
+  <!-- ============================================================ -->
+  <section data-label="17 Kontekst er alt" data-om-id="21bf206b:262" data-screen-label="18 17 Kontekst er alt" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="17">
+    <div class="mark-tl" data-om-id="21bf206b:263">Del 2 · Getting started</div>
+    <div class="mark-br" data-om-id="21bf206b:264">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:265">
+      <div data-om-id="21bf206b:266">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:267">Kontekst <span class="accent" data-om-id="21bf206b:268"></span></h2>
+      </div>
+      <div class="kontekst-list" data-om-id="21bf206b:269">
+        <div class="kctx" data-om-id="21bf206b:270">
+          <div class="knum" data-om-id="21bf206b:271">01</div>
+          <div data-om-id="21bf206b:272">
+            <h3 data-om-id="21bf206b:273">Samtalen</h3>
+          </div>
+        </div>
+        <div class="kctx" data-om-id="21bf206b:274">
+          <div class="knum" data-om-id="21bf206b:275">02</div>
+          <div data-om-id="21bf206b:276">
+            <h3 data-om-id="21bf206b:277">Memories</h3>
+          </div>
+        </div>
+        <div class="kctx" data-om-id="21bf206b:278">
+          <div class="knum" data-om-id="21bf206b:279">03</div>
+          <div data-om-id="21bf206b:280">
+            <h3 data-om-id="21bf206b:281">CLAUDE.md</h3>
+          </div>
+        </div>
+        <div class="kctx" data-om-id="21bf206b:282">
+          <div class="knum" data-om-id="21bf206b:283">04</div>
+          <div data-om-id="21bf206b:284">
+            <h3 data-om-id="21bf206b:285">Skills</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 18 · Prosjektminne & brukerminne -->
+  <!-- ============================================================ -->
+  <section data-label="18 Prosjekt vs bruker" data-om-id="21bf206b:286" data-screen-label="19 18 Prosjekt vs bruker" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="18">
+    <div class="mark-tl" data-om-id="21bf206b:287">Del 2 · Getting started</div>
+    <div class="mark-br" data-om-id="21bf206b:288">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:289">
+      <div data-om-id="21bf206b:290">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:291">Prosjektminne <em class="ink-soft" data-om-id="21bf206b:292">og</em> brukerminne.</h2>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; margin-top: 20px;" data-om-id="21bf206b:293">
+        <div class="mem-card" data-om-id="21bf206b:294">
+          <div class="mem-tag" data-om-id="21bf206b:295">Prosjektets</div>
+          <h3 data-om-id="21bf206b:296">Prosjekt­minne</h3>
+          <p class="hand" style="font-size: 44px; color: var(--ink); margin-top: auto;" data-om-id="21bf206b:297">“Hva er prosjektets preferanser?”</p>
+        </div>
+        <div class="mem-card dark" data-om-id="21bf206b:298">
+          <div class="mem-tag" data-om-id="21bf206b:299">Dine</div>
+          <h3 data-om-id="21bf206b:300">Bruker­minne</h3>
+          <p class="hand" style="font-size: 44px; color: var(--gul, #ffd9a1); margin-top: auto;" data-om-id="21bf206b:301">“Hva er mine preferanser?”</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 19 · Skills -->
+  <!-- ============================================================ -->
+  <section data-label="19 Skills" data-om-id="21bf206b:302" data-screen-label="20 19 Skills" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="19">
+    <div class="mark-tl" data-om-id="21bf206b:303">Del 2 · Getting started</div>
+    <div class="mark-br" data-om-id="21bf206b:304">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:305">
+      <div data-om-id="21bf206b:306">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:307"><em class="ink-soft" data-om-id="21bf206b:308"></em></h2>
+      </div>
+      <div class="skills-grid" data-om-id="21bf206b:309">
+        <div style="display: flex; flex-direction: column; gap: 28px; justify-content: center;" data-om-id="21bf206b:310">
+          <p class="hand" style="font-size: 52px; color: var(--red); line-height: 1.1;" data-om-id="21bf206b:311">
+            En .md-fil<br data-om-id="21bf206b:312">+ noen eksempler.
+          </p>
+          <p class="body" style="font-size: 28px; color: var(--ink-soft);" data-om-id="21bf206b:313">
+            Det er hele oppskriften.
+          </p>
+        </div>
+        <div class="skill-tree" data-om-id="21bf206b:314">
+          <div class="ln" data-om-id="21bf206b:315"><span class="dir" data-om-id="21bf206b:316">.claude/skills/</span></div>
+          <div class="ln" data-om-id="21bf206b:317">└── <span class="focus" data-om-id="21bf206b:318">learning-opportunities/</span></div>
+          <div class="ln" data-om-id="21bf206b:319">    ├── <span class="file" data-om-id="21bf206b:320">SKILL.md</span></div>
+          <div class="ln" data-om-id="21bf206b:321">    ├── <span class="file" data-om-id="21bf206b:322">prompt.md</span></div>
+          <div class="ln" data-om-id="21bf206b:323">    ├── <span class="file" data-om-id="21bf206b:324">examples/</span></div>
+          <div class="ln" data-om-id="21bf206b:325">    │   ├── <span class="file" data-om-id="21bf206b:326">refactor-01.md</span></div>
+          <div class="ln" data-om-id="21bf206b:327">    │   └── <span class="file" data-om-id="21bf206b:328">refactor-02.md</span></div>
+          <div class="ln" data-om-id="21bf206b:329">    └── <span class="file" data-om-id="21bf206b:330">checklist.md</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 20 · DEL 3 — Agile ♡ AI -->
+  <!-- ============================================================ -->
+  <section data-label="20 Del 3 — Agile AI" class="inverse" data-om-id="21bf206b:331" data-screen-label="21 20 Del 3 — Agile AI" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="20">
+    <div class="divider" data-om-id="21bf206b:332">
+      <svg class="pie pie-big" viewBox="0 0 100 100" data-om-id="21bf206b:333">
+        <circle class="ring" cx="50" cy="50" r="46" stroke-width="3" data-om-id="21bf206b:334"></circle>
+        <path class="slice" d="M50 4 A46 46 0 0 1 96 50 L50 50 Z" data-om-id="21bf206b:335"></path>
+        <path class="slice" d="M96 50 A46 46 0 0 1 50 96 L50 50 Z" data-om-id="21bf206b:336"></path>
+        <path class="slice" d="M50 96 A46 46 0 0 1 4 50 L50 50 Z" data-om-id="21bf206b:337"></path>
+      </svg>
+      <div data-om-id="21bf206b:338">
+        <div class="num-mark" data-om-id="21bf206b:339">Del 3 av 4</div>
+        <h2 class="section-title" data-om-id="21bf206b:340">Agile &amp; AI</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 21 · Fire steg i loopen -->
+  <!-- ============================================================ -->
+  <section data-label="21 Fire steg" data-om-id="21bf206b:342" data-screen-label="22 21 Fire steg" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="21">
+    <div class="mark-tl" data-om-id="21bf206b:343">Del 3 · Agile ♡ AI</div>
+    <div class="mark-br" data-om-id="21bf206b:344">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:345">
+      <div data-om-id="21bf206b:346">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:347">Fire steg i loopen.</h2>
+      </div>
+      <div class="fourstep" data-om-id="21bf206b:348">
+        <svg class="arc" viewBox="0 0 1600 220" preserveAspectRatio="none" aria-hidden="true" data-om-id="21bf206b:351">
+          <path d="M 1500 200 C 1530 70, 1380 24, 1180 22 L 420 20 C 220 22, 70 70, 100 200" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 12" data-om-id="21bf206b:352"></path>
+          <path d="M 80 178 L 100 204 L 122 180" stroke="currentColor" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round" data-om-id="21bf206b:353"></path>
+        </svg>
+        <span class="arc-label" data-om-id="21bf206b:354">gjenta · gjenta · gjenta</span>
+        <div class="nodes" data-om-id="21bf206b:355">
+          <div class="fnode" data-om-id="21bf206b:356">
+            <div class="fdot" data-om-id="21bf206b:357">1</div>
+            <div class="fname" data-om-id="21bf206b:358">Diskuter</div>
+          </div>
+          <svg class="farrow" viewBox="0 0 100 60" aria-hidden="true" data-om-id="21bf206b:359">
+            <path d="M 8 30 C 32 16, 64 44, 86 30" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" data-om-id="21bf206b:360"></path>
+            <path d="M 76 22 L 90 30 L 76 38" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" data-om-id="21bf206b:361"></path>
+          </svg>
+          <div class="fnode" data-om-id="21bf206b:362">
+            <div class="fdot" data-om-id="21bf206b:363">2</div>
+            <div class="fname" data-om-id="21bf206b:364">Planlegg</div>
+          </div>
+          <svg class="farrow" viewBox="0 0 100 60" aria-hidden="true" data-om-id="21bf206b:365">
+            <path d="M 8 30 C 32 44, 64 16, 86 30" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" data-om-id="21bf206b:366"></path>
+            <path d="M 76 22 L 90 30 L 76 38" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" data-om-id="21bf206b:367"></path>
+          </svg>
+          <div class="fnode" data-om-id="21bf206b:368">
+            <div class="fdot" data-om-id="21bf206b:377">3</div>
+            <div class="fname" data-om-id="21bf206b:380">Bygg</div>
+          </div>
+          <svg class="farrow" viewBox="0 0 100 60" aria-hidden="true" data-om-id="21bf206b:383">
+            <path d="M 8 30 C 32 16, 64 44, 86 30" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" data-om-id="21bf206b:384"></path>
+            <path d="M 76 22 L 90 30 L 76 38" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" data-om-id="21bf206b:385"></path>
+          </svg>
+          <div class="fnode" data-om-id="21bf206b:387">
+            <div class="fdot" data-om-id="21bf206b:388">4</div>
+            <div class="fname" data-om-id="21bf206b:390">Verifiser</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 22 · Diskuter og planlegg -->
+  <!-- ============================================================ -->
+  <section data-label="22 Diskuter og planlegg" data-om-id="21bf206b:391" data-screen-label="23 22 Diskuter og planlegg" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="22">
+    <div class="mark-tl" data-om-id="21bf206b:392">Del 3 · Agile ♡ AI</div>
+    <div class="mark-br" data-om-id="21bf206b:393">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:394">
+      <div data-om-id="21bf206b:395">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:396">Diskuter <em class="ink-soft" data-om-id="21bf206b:397">og</em> planlegg.</h2>
+      </div>
+      <div class="twoup" data-om-id="21bf206b:398">
+        <div class="step-card" data-om-id="21bf206b:399">
+          <div class="stag" data-om-id="21bf206b:400">
+            <span class="snum" data-om-id="21bf206b:401">①</span>
+            <span class="sname" data-om-id="21bf206b:402">Diskuter</span>
+          </div>
+          <div class="quote" style="margin-top: auto;" data-om-id="21bf206b:403">“Forklar meg som om<br data-om-id="21bf206b:404">jeg er ny på teamet.”</div>
+        </div>
+        <div class="step-card" data-om-id="21bf206b:405">
+          <div class="stag" data-om-id="21bf206b:406">
+            <span class="snum" data-om-id="21bf206b:407">②</span>
+            <span class="sname" data-om-id="21bf206b:408">Planlegg</span>
+          </div>
+          <div class="quote" style="margin-top: auto;" data-om-id="21bf206b:409">“Skriv en plan.<br data-om-id="21bf206b:410">Ikke begynn ennå.”</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 23 · Bygg og verifiser -->
+  <!-- ============================================================ -->
+  <section data-label="23 Bygg og verifiser" data-om-id="21bf206b:411" data-screen-label="24 23 Bygg og verifiser" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="23">
+    <div class="mark-tl" data-om-id="21bf206b:412">Del 3 · Agile ♡ AI</div>
+    <div class="mark-br" data-om-id="21bf206b:413">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:414">
+      <div data-om-id="21bf206b:415">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:416">Bygg <em class="ink-soft" data-om-id="21bf206b:417">og</em> verifiser.</h2>
+      </div>
+      <div class="twoup" data-om-id="21bf206b:418">
+        <div class="step-card" data-om-id="21bf206b:419">
+          <div class="stag" data-om-id="21bf206b:420">
+            <span class="snum" data-om-id="21bf206b:421">③</span>
+            <span class="sname" data-om-id="21bf206b:422">Bygg</span>
+          </div>
+          <div class="quote" style="margin-top: auto;" data-om-id="21bf206b:423">“Stopp. Jeg tror<br data-om-id="21bf206b:424">du har misforstått.”</div>
+        </div>
+        <div class="step-card" data-om-id="21bf206b:425">
+          <div class="stag" data-om-id="21bf206b:426">
+            <span class="snum" data-om-id="21bf206b:427">④</span>
+            <span class="sname" data-om-id="21bf206b:428">Verifiser</span>
+          </div>
+          <div class="quote" style="margin-top: auto;" data-om-id="21bf206b:429">“Hva er du minst<br data-om-id="21bf206b:430">sikker på her?”</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Bridge · Å bygge lærende organisasjoner -->
+  <!-- ============================================================ -->
+  <section data-label="24 Hvordan bygger" data-om-id="21bf206b:431" data-screen-label="25 24 Hvordan bygger" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="24">
+    <div class="mark-tl" data-om-id="21bf206b:432">Del 3 · Agile ♡ AI</div>
+    <div class="mark-br" data-om-id="21bf206b:433">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:434">
+      <div data-om-id="21bf206b:435">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:436">Å bygge lærende organisasjoner <em class="ink-soft" data-om-id="21bf206b:437"></em></h2>
+      </div>
+      <div class="reframe" data-om-id="21bf206b:438">
+        <div class="reframe-card" data-om-id="21bf206b:439">
+          <span class="rtag" data-om-id="21bf206b:440">Å lære ved å bygge</span>
+          <h3 data-om-id="21bf206b:441">Vi mister læring ved å ikke skrive koden selv<br data-om-id="21bf206b:442">(også underbygget av forskning)</h3>
+        </div>
+        <div class="reframe-arrow" data-om-id="21bf206b:443">
+          <svg viewBox="0 0 80 60" width="80" height="60" data-om-id="21bf206b:444">
+            <path d="M 8 30 C 30 18, 50 42, 72 30" stroke="#450d21" stroke-width="3" fill="none" stroke-linecap="round" data-om-id="21bf206b:445"></path>
+            <path d="M 64 22 L 74 30 L 64 38" stroke="#450d21" stroke-width="3" fill="none" stroke-linecap="round" data-om-id="21bf206b:446"></path>
+          </svg>
+        </div>
+        <div class="reframe-card ans" data-om-id="21bf206b:447">
+          <span class="rtag" data-om-id="21bf206b:448">Motvekten</span>
+          <h3 data-om-id="21bf206b:449">Bruk tiden vi får til å snakke sammen, diskutere og tegne.</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 24 · DEL 4 — Hva skjer nå -->
+  <!-- ============================================================ -->
+  <section data-label="24 Del 4 — Hva nå" class="inverse" data-om-id="21bf206b:453" data-screen-label="26 24 Del 4 — Hva nå" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="25">
+    <div class="divider" data-om-id="21bf206b:454">
+      <svg class="pie pie-big" viewBox="0 0 100 100" data-om-id="21bf206b:455">
+        <circle cx="50" cy="50" r="46" fill="currentColor" data-om-id="21bf206b:456"></circle>
+      </svg>
+      <div data-om-id="21bf206b:457">
+        <div class="num-mark" data-om-id="21bf206b:458">Del 4 av 4</div>
+        <h2 class="section-title" data-om-id="21bf206b:459"></h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Del 4 slide 1 · Agile manifesto -->
+  <!-- ============================================================ -->
+  <section data-label="26 Agile manifesto" class="manifesto" data-om-id="21bf206b:461" data-screen-label="27 26 Agile manifesto" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="26">
+    <div class="mark-tl" data-om-id="21bf206b:462">Del 4 · Hva nå</div>
+    <div class="mark-br" data-om-id="21bf206b:463">Miles</div>
+    <div class="closing" style="padding: var(--pad-top) 200px var(--pad-bottom);" data-om-id="21bf206b:464">
+<p class="pull" style="font-size: 80px; line-height: 1.05;" data-om-id="21bf206b:465">
+        “We are uncovering<br data-om-id="21bf206b:466">
+        <em class="accent" data-om-id="21bf206b:467">better ways</em> of developing software<br data-om-id="21bf206b:468">
+        by doing it and<br data-om-id="21bf206b:469">
+        helping others do it.”
+      </p>
+      <div class="sig" data-om-id="21bf206b:470">— agilemanifesto.org</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Del 4 slide 2 · Tre løkker -->
+  <!-- ============================================================ -->
+  <section data-label="27 Tre løkker" data-om-id="21bf206b:471" data-screen-label="28 27 Tre løkker" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="27">
+    <div class="mark-tl" data-om-id="21bf206b:472">Del 4 · Hva nå</div>
+    <div class="mark-br" data-om-id="21bf206b:473">Miles</div>
+    <div class="top-stack" data-om-id="21bf206b:474">
+      <div data-om-id="21bf206b:475">
+<h2 class="title" style="margin-top: 28px;" data-om-id="21bf206b:476">Tre løkker <em class="ink-soft" data-om-id="21bf206b:477">— ikke to.</em></h2>
+      </div>
+      <div class="loops-wrap" data-om-id="21bf206b:478">
+        <div class="loop-rings" data-om-id="21bf206b:479">
+          <svg viewBox="0 0 600 600" data-om-id="21bf206b:480">
+            <circle cx="300" cy="300" r="280" fill="none" stroke="#450d21" stroke-width="3" stroke-dasharray="4 8" data-om-id="21bf206b:481"></circle>
+            <circle cx="300" cy="300" r="190" fill="#ff303b" opacity="0.95" data-om-id="21bf206b:482"></circle>
+            <circle cx="300" cy="300" r="100" fill="#450d21" data-om-id="21bf206b:483"></circle>
+            <text x="300" y="40" text-anchor="middle" fill="#450d21" font-family="DM Sans" font-size="24" font-weight="600" letter-spacing="4" data-om-id="21bf206b:484">OUTER</text>
+            <text x="300" y="160" text-anchor="middle" fill="#fbf0e5" font-family="DM Sans" font-size="24" font-weight="600" letter-spacing="4" data-om-id="21bf206b:485">MIDDLE</text>
+            <text x="300" y="310" text-anchor="middle" fill="#fbf0e5" font-family="Gelica" font-style="italic" font-size="28" data-om-id="21bf206b:486">inner</text>
+          </svg>
+        </div>
+        <div class="loops-legend" data-om-id="21bf206b:487">
+          <div class="lrow" data-om-id="21bf206b:488">
+            <span class="lswatch" style="background: #450d21; opacity: 0.3; border: 2px dashed #450d21;" data-om-id="21bf206b:489"></span>
+            <div class="ltext" data-om-id="21bf206b:490">
+              <span class="ltag" data-om-id="21bf206b:491">Outer loop</span>
+              <span class="lname" data-om-id="21bf206b:492">Agile delivery</span>
+            </div>
+          </div>
+          <div class="lrow mid" data-om-id="21bf206b:493">
+            <span class="lswatch" style="background: #ff303b;" data-om-id="21bf206b:494"></span>
+            <div class="ltext" data-om-id="21bf206b:495">
+              <span class="ltag" data-om-id="21bf206b:496">Middle loop · ny</span>
+              <span class="lname" data-om-id="21bf206b:497">Agentic engineering</span>
+            </div>
+          </div>
+          <div class="lrow" data-om-id="21bf206b:498">
+            <span class="lswatch" style="background: #450d21;" data-om-id="21bf206b:499"></span>
+            <div class="ltext" data-om-id="21bf206b:500">
+              <span class="ltag" data-om-id="21bf206b:501">Inner loop</span>
+              <span class="lname" data-om-id="21bf206b:502">Coding</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Del 4 slide 3 · Er å skrive kode vårt viktigste bidrag? -->
+  <!-- ============================================================ -->
+  <section data-label="28 Er kode vårt bidrag" data-om-id="21bf206b:503" data-screen-label="29 28 Er kode vårt bidrag" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="28">
+    <div class="mark-tl" data-om-id="21bf206b:504">Del 4 · Hva nå</div>
+    <div class="mark-br" data-om-id="21bf206b:505">Miles</div>
+    <div class="closing" style="padding: var(--pad-top) 180px var(--pad-bottom); gap: 40px;" data-om-id="21bf206b:506">
+<p class="pull" style="font-size: 96px; line-height: 1.02; font-style: normal;" data-om-id="21bf206b:507">
+        Er <em class="accent" style="font-style: italic;" data-om-id="21bf206b:508">å skrive kode</em><br data-om-id="21bf206b:509">
+        vårt viktigste bidrag?
+      </p>
+      <p class="hand" style="font-size: 64px; color: var(--ink-soft); margin-top: 16px;" data-om-id="21bf206b:510">
+        Hva gjør vi <em style="font-style: italic;" data-om-id="21bf206b:511">når vi ikke skriver?</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Del 4 slide 4 · Up-skilling / Down-skilling -->
+  <!-- ============================================================ -->
+  <section data-label="29 Up- eller down-skilling" data-om-id="21bf206b:512" data-screen-label="30 29 Up- eller down-skilling" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="29">
+    <div class="updown" data-om-id="21bf206b:513">
+      <div class="ud-side up" data-om-id="21bf206b:514">UP‑SKILLING</div>
+      <div class="ud-or" data-om-id="21bf206b:515">— or —</div>
+      <div class="ud-side down" data-om-id="21bf206b:516">DOWN‑SKILLING</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Del 4 slide 5 · Fri meg fra tastaturet -->
+  <!-- ============================================================ -->
+  <section data-label="30 Fri meg fra tastaturet" data-om-id="21bf206b:517" data-screen-label="31 30 Fri meg fra tastaturet" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="30">
+    <div class="mark-tl" data-om-id="21bf206b:518">Del 4 · Hva nå</div>
+    <div class="mark-br" data-om-id="21bf206b:519">Miles</div>
+    <div class="fri-meg" data-om-id="21bf206b:520">
+      <div class="heart-big" data-om-id="21bf206b:521">♡</div>
+      <h2 class="frase" data-om-id="21bf206b:522">Fri meg fra<br data-om-id="21bf206b:523"><em data-om-id="21bf206b:524">tastaturet.</em></h2>
+      <p class="epi" data-om-id="21bf206b:525">
+        Maskinene blir veldig gode på å være maskiner.<br data-om-id="21bf206b:526">
+        Vi skal være veldig gode på å være mennesker.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 26 · Takk -->
+  <!-- ============================================================ -->
+  <section data-label="26 Takk" data-om-id="21bf206b:527" data-screen-label="32 26 Takk" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="31" data-deck-last-visible="">
+    <div class="mark-tl" data-om-id="21bf206b:528">Kode59</div>
+    <div class="mark-br" data-om-id="21bf206b:529">Miles</div>
+    <div class="thanks" data-om-id="21bf206b:530">
+      <div class="mega" data-om-id="21bf206b:531">Takk!</div>
+      <div class="scrawl" data-om-id="21bf206b:532">Spørsmål?</div>
+      <div class="contact" data-om-id="21bf206b:533">
+        <span data-om-id="21bf206b:534">[ditt.navn@miles.no]</span>
+        <span data-om-id="21bf206b:535">·</span>
+        <span data-om-id="21bf206b:536">[@dittnavn]</span>
+        <span data-om-id="21bf206b:537">·</span>
+        <span data-om-id="21bf206b:538">miles.no</span>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- Speaker notes — én streng per slide, samme rekkefølge -->
+<script type="application/json" id="speaker-notes">
+[
+  "Hei, og velkommen til Kode59, alle sammen. Godt å se så mange ansikter her på Folkebiblioteket en onsdagskveld. Tittelen — som dere ser — er stjålet fra Murakami. Hva jeg snakker om når jeg snakker om kode. Og det vi egentlig skal snakke om, det står i håndskrift: agentisk koding, hva nå? La oss begynne.",
+  "Bare et par ord om hvem som står her, sånn at dere vet hvor jeg snakker fra. [Bytt ut denne med ditt navn, rolle, og litt om hvorfor akkurat du står her og snakker om dette i kveld. Hold det kort — to-tre setninger holder.] Jeg har jobbet med kode i mange år, men det siste året har vært annerledes, og det er det jeg vil snakke om i kveld.",
+  "Vi skal gjennom fire deler. Først litt historie — hvor i alle dager kom vi fra, og hvor er vi nå. Så praktisk del: hvordan kommer du selv i gang, kanskje i kveld. Tredje del handler om prosess — hvordan endrer det måten vi faktisk jobber på. Og helt til slutt: hva skjer med oss nå? Mer åpen del der jeg deler hva jeg tenker, og så er det forhåpentligvis tid til spørsmål.",
+  "Først, del én. Litt historie og bakgrunn. Vi spoler raskt gjennom de viktigste punktene, så vi vet hvor vi står.",
+  "Hele bevegelsen kan plottes på en tidslinje med fem punkter. Vi starter helt tilbake i 2017, og kommer fram til mai 2026 — som er akkurat nå. Den prikken til høyre, det er oss.",
+  "2017. Et team fra Google publiserer et paper som heter Attention is all you need. Det er her transformer-arkitekturen kommer på bordet. På den tiden er det stille i utviklermiljøet — dette ser ut som akademisk arbeid, et nytt nevralt nettverk blant mange. Men i ettertid: det er her hele sporet legges. Alt som kommer etterpå er en konsekvens av dette paperet.",
+  "Hopp fram til november 2022. OpenAI slipper ChatGPT. 100 millioner brukere på to måneder. Verdens raskeste produktlansering noensinne. Plutselig har alle prøvd seg på AI — bestemødre, journalister, statsministre, alle. Wow-effekten er reell, og den setter resten av bransjen i bevegelse.",
+  "2024. Det er her det blir interessant for oss som koder. Modellene får verktøy. Function calling, det vi kaller tool-use. MCP, Model Context Protocol, kommer på banen. Modellen slutter å bare svare deg — den begynner å handle. Lese filer. Søke på nettet. Kjøre kommandoer. Dette er den stille revolusjonen, for det er først nå LLM-en faktisk blir en agent. Før dette var det bare en samtalemaskin. Nå er det noe som kan gjøre ting.",
+  "2025. Anthropic gir oss Claude Code — et CLI-verktøy som lever i terminalen din. Du snakker med modellen rett der hvor koden bor. Samme år populariserer Andrej Karpathy begrepet vibe coding: du beskriver hva du vil, modellen koder. Koding endrer karakter. Det er ikke lenger primært å skrive — det er å samtale.",
+  "Karpathy fortjener litt ekstra tid, fordi han fanger skiftet bedre enn de fleste — i to setninger, med ett års mellomrom. Februar 2025: «vibe coding», gi deg hen til vibene, glem at koden eksisterer. Lekent, eksperimentelt. Et år senere, februar 2026 — samme stemme, helt annet ord: «agentic engineering». Du skriver ikke koden direkte 99% av tiden. Du orkestrerer agenter, og du er oversight. Det krever ekspertise — det er et håndverk, en ingeniørdisiplin. Det er den vendingen vi er midt i.",
+  "Og så er vi her, i mai 2026. Vi står ikke foran bølgen. Vi står midt i den. Og spørsmålet er ikke om dette kommer — det er allerede her, dere har sett det på jobb, dere har lest om det, dere har kanskje prøvd. Spørsmålet er: hva gjør vi med det? Det er det resten av kvelden handler om.",
+  "Hvorfor snakker vi om dette akkurat nå? Fordi modellene har passert et punkt. Ikke fordi de er perfekte — de er det absolutt ikke — men fordi de er gode nok. Gode nok til oppgaver med stor kontekst og lang tidshorisont. For et år siden ga modellen opp etter ti minutter. Den mistet tråden, glemte hva den drev med, begynte å hallusinere. Nå holder den i en hel ettermiddag. Det er den ene endringen som har gjort agentisk koding praktisk mulig.",
+  "Før vi går videre, vil jeg si én ting som er lett å misforstå. Det er fristende å tenke at vi har passert fra chat til tab-complete til vibes til agentisk — at det er en lineær utvikling. Det er det ikke. Det er fire parallelle mønstre, fire moduser som lever side om side i dag. Chat for kunnskap og diskusjon. Tab-complete når du selv er i førersetet. Vibes når du vil noe raskt og er villig til å dirigere fra siden. Agentisk når du har en ordentlig oppgave og vil at modellen skal jobbe selvstendig. Det handler om å velge riktig modus for jobben — ikke om å oppgradere seg til den nyeste.",
+  "Konsekvensen er at tre ting endrer seg samtidig. Vi får nye kapabiliteter — ting modellen kan nå som den ikke kunne før. Det gir ny UX — måten vi snakker med maskinen er ikke et chat-vindu lenger, det er en agent som jobber for oss. Og det gir ny arbeidsprosess. Og det er den siste — arbeidsprosessen — som er resten av kvelden.",
+  "Greit. Da går vi over til del to. Hvordan kommer du faktisk i gang.",
+  "Først: et lite hot take fra meg. CLI for the win. Command line. Terminalen er der den agentiske loopen kjører best akkurat nå. Det er ikke fordi IDE-er er dårlige — de er flotte. Men CLI er det enkleste, mest transparente grensesnittet for en modell som skal lese filer, kjøre kommandoer og rapportere tilbake. Ingen IDE som blander seg, ingen UI som skjuler hva som skjer. Du ser alt. Og det viser seg å være veldig viktig når du jobber agentisk.",
+  "To linjer. Det er hele oppskriften for å komme i gang. Først, installer Claude Code med curl-kommandoen. Så skriver du claude. Det er det. Hvis du har en mac eller en linux-maskin, kan du gjøre dette på fem minutter — bokstavelig talt fem minutter. Det er det jeg vil at dere skal ta med dere fra denne slidaen.",
+  "Det viktigste begrepet i agentisk koding er kontekst. Hva vet modellen om problemet ditt? Det er det som avgjør om du får et godt svar eller et useless svar. Det er fire kilder. Samtalen — det dere snakker om akkurat nå, det er flyktig, det forsvinner når økten lukkes. Memories — det modellen husker mellom samtaler. CLAUDE.md som peker videre til prosjektets dokumentasjon — en fil i prosjektet ditt som forklarer hvordan ting fungerer, modellen leser den først. Og Skills — gjenbrukbare ferdigheter modellen kan plukke opp ved behov. Vi tar memories og skills i de neste slidene.",
+  "Memories deles i to. Til høyre: brukerminne. Det er dine preferanser, din stil, hva du liker. Følger deg på tvers av prosjekter. Til venstre: prosjektminne. Det er prosjektets konvensjoner — kodestil, arkitekturvalg, domenebegreper. Lever som regel i en CLAUDE.md i rota av prosjektet. Spør deg selv to spørsmål når du setter dette opp: hva er mine preferanser, og hva er prosjektets preferanser? Skill dem fra hverandre. Det blir mye bedre.",
+  "Skills, kort fortalt: en mappe med en oppskrift. Et navn, en beskrivelse, og noen instruksjoner og eksempler. Når modellen ser at oppgaven din matcher beskrivelsen, plukker den opp skill-en og bruker den. Eksempelet til høyre: en skill jeg har lagd selv som heter learning-opportunities. Den ser etter steder i koden der jeg kan lære noe nytt — et mønster jeg ikke kjenner, en bedre måte å løse et problem på — og foreslår en liten mikro-øvelse. Helt enkelt: en SKILL.md, noen eksempler, en sjekkliste. Det er alt en skill er.",
+  "Da er vi over på del tre. Hvordan endrer dette måten vi faktisk jobber på? Tittelen er Agile elsker AI — for det viser seg å være en veldig god match.",
+  "Min prosess er fire steg. Diskuter. Planlegg. Bygg. Verifiser. Sirkulær — vi går rundt igjen og igjen for hver oppgave. Hvis du har drevet med agile før, kjenner du dette igjen. Det er små inkrementer. Du går ikke fra ingenting til ferdig produkt i én sving. Du går i loop.",
+  "Steg én og to. Diskuter: snakk om problemet først, som du ville gjort med en kollega som er ny på teamet. Behandle modellen sånn — for den er ny på teamet. Den kjenner ikke prosjektet ditt før du forteller den. Steg to, planlegg: be om en plan før noe kode skrives. Stikkord, ikke prosa — hva skal skje, i hvilken rekkefølge. Når dere er enige om planen, og bare da, slipper du modellen løs. Det her er nøkkelen til at det går bra. Hvis du hopper rett til bygg, blir det rot.",
+  "Steg tre: bygg. Modellen jobber. Jeg sitter ofte og gjør noe annet parallelt — sjekker post, leser dokumentasjon, jobber på noe annet. Men jeg følger med. Og hvis jeg ser at den har misforstått, avbryter jeg tidlig. Et godt avbrudd er alltid billigere enn en lang feilretting. Steg fire: verifiser. Les diff-en. Kjør testene. Test selv. Hver eneste gang. Verifisering er der tilliten bygges — og det er også der tilliten brytes hvis du slurver. Den jobben blir aldri modellens jobb. Det er din.",
+  "Før vi forlater Del 3 — en bekymring jeg vil ta tak i. Hvis modellen skriver mer av koden, mister vi da læring? Jeg har kjent det selv. Den seige biten av å slite seg gjennom hver linje — det er der mye av kompetansen min ble bygget. Men: jeg tror motvekten er enkel. Skriv mindre kode. Diskuter, tegn og planlegg mer. Læringen flytter seg ikke vekk — den flytter seg opp. Til diskusjonen, til planleggingen, til design-valgene. Det er der jeg lærer mest i dag.",
+  "Og helt til slutt: hva skjer med oss nå?",
+  "Jeg vil starte Del 4 med å gå helt tilbake. Til 2001. Til Agile-manifestet. «We are uncovering better ways of developing software by doing it, and helping others do it.» Det er fortsatt det mest sanne som er sagt om jobben vår. Det handler ikke om verktøy. Det handler om at vi avdekker bedre måter — ved å gjøre, og ved å hjelpe hverandre. Det er ikke endret av AI. Det er gjort enda viktigere av AI.",
+  "Thoughtworks samlet noen av de største navnene i bransjen — Martin Fowler, Kent Beck, Steve Yegge, Gene Kim — på et retreat tidligere i år. En av nøkkelinnsiktene: programvareutvikling har nå tre løkker, ikke to. Innerst: koding — det vi alltid har gjort. Ytterst: agile delivery — sprints, deploys, drift. Og nå, en ny i midten: agentic engineering. Den har ingen ferdig form ennå. Den handler om å designe agenter, instruere dem, sette begrensninger, og verifisere. Mye av jobben vår flytter seg dit. Det er der den nye karrieren vokser.",
+  "Et provoserende spørsmål. Hvis vi ikke lenger skriver 99% av koden — er det å skrive kode virkelig vårt viktigste bidrag? Eric Raymond skrev nylig at han alltid hadde vært en systemdesigner; koden var bare midlet. Ryan Dahl sa det rett ut: æraen der mennesker skriver kode er over. Jobben er ikke borte — men jobben er forandret. Vi designer. Vi diskuterer. Vi verifiserer. Vi lærer bort. Vi forstår domenet. Vi setter retning. Spørsmålet vi må stille oss — hva gjør vi når vi ikke skriver?",
+  "Og dette — opp-skilling, eller ned-skilling? Sannheten er: begge skjer samtidig. Du som sitter i salen avgjør hvilken side du havner på. Bruker du den frigjorte tida på å lære deg domenet bedre, forstå brukerne, gå dypere inn i arkitekturen, spørre vanskelige spørsmål — så er det opp-skilling. Bruker du den på autopilot — på å scrolle, eller på å levere flere features med mindre tanke — så er det ned-skilling. Verktøyet er det samme. Valget er ditt.",
+  "Og hvis jeg skal ende et sted: her. Drømmen er ikke å bli en raskere koder. Drømmen er å bli fri fra tastaturet, og fri til å tenke. Til å være den som forstår problemet, ikke den som skriver løsningen. Maskinene blir veldig gode på å være maskiner. Vi skal være veldig gode på å være mennesker. Det er der den interessante jobben venter.",
+  "Tusen takk for at dere kom og hørte på. Da er det åpent for spørsmål, hvis dere har noen — så er jeg her etterpå, og koselig å hilse på dere alle sammen."
+]
+</script>
+
+<script src="deck-stage.js"></script>
+<script src="image-slot.js"></script>
+
+<!-- React + Babel for the Tweaks panel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks-app.jsx"></script>
+
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8" />
+<title>Agentisk Koding — Whiteboard sketch</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #2a2a2a;
+    --board: #e8e6e1;
+    --board-shadow: rgba(0,0,0,0.08);
+    --note: #fdfdfa;
+    --note-edge: #e6e3da;
+    --tape: rgba(220, 210, 180, 0.55);
+    --accent: #c33;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Kalam", "Caveat", cursive;
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse at 30% 20%, #f1efe8 0%, #e3e0d8 60%, #d8d4c9 100%);
+    min-height: 100vh;
+    padding: 56px 48px 80px;
+  }
+  /* subtle whiteboard glare */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.25) 45%, transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,0.08), transparent 30%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .meta {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto 32px;
+    font-family: "DM Sans", system-ui, sans-serif;
+    color: #555;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px dashed #b8b5ab;
+    padding-bottom: 10px;
+  }
+  .meta strong { color: #222; font-weight: 600; }
+
+  .board {
+    position: relative;
+    z-index: 2;
+    max-width: 1500px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 28px 22px;
+    align-items: start;
+  }
+
+  .note {
+    position: relative;
+    background: var(--note);
+    border: 1px solid var(--note-edge);
+    border-radius: 3px;
+    padding: 22px 22px 26px;
+    min-height: 170px;
+    box-shadow:
+      0 2px 1px rgba(0,0,0,0.04),
+      0 6px 14px var(--board-shadow),
+      0 14px 28px rgba(0,0,0,0.04);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .note:hover { transform: translateY(-2px) rotate(0deg) !important; }
+  /* tape on top */
+  .note::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 70px;
+    height: 18px;
+    background: var(--tape);
+    border-left: 1px solid rgba(180,170,140,0.4);
+    border-right: 1px solid rgba(180,170,140,0.4);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  /* slight individual rotations for tactile feel */
+  .board > .note:nth-child(7n+1) { transform: rotate(-0.6deg); }
+  .board > .note:nth-child(7n+2) { transform: rotate(0.4deg); }
+  .board > .note:nth-child(7n+3) { transform: rotate(-0.3deg); }
+  .board > .note:nth-child(7n+4) { transform: rotate(0.8deg); }
+  .board > .note:nth-child(7n+5) { transform: rotate(-0.5deg); }
+  .board > .note:nth-child(7n+6) { transform: rotate(0.3deg); }
+  .board > .note:nth-child(7n+7) { transform: rotate(-0.7deg); }
+
+  .note .num {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 3;
+  }
+
+  .note .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ico {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+  }
+
+  .title-label {
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: -2px;
+  }
+
+  /* sticky note text styles */
+  h1, h2, h3, p, ul, ol { margin: 0; font-weight: 400; }
+  .big {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.0;
+    letter-spacing: 0.02em;
+  }
+  .mid {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.05;
+  }
+  .small {
+    font-family: "Kalam", cursive;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.35;
+  }
+  .tiny {
+    font-family: "Kalam", cursive;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    color: var(--ink-soft);
+  }
+  .underline { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+  .accent { color: var(--accent); }
+
+  /* TITLE CARD (note 1) */
+  .note.title-card {
+    background: #fffef8;
+  }
+  .title-card .kicker {
+    font-family: "Caveat", cursive;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+  .title-card h1 {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+  }
+  .title-card .sub {
+    font-family: "Caveat", cursive;
+    font-weight: 500;
+    font-size: 22px;
+    margin-top: auto;
+    align-self: flex-end;
+    color: var(--ink-soft);
+  }
+
+  /* SECTION (pie) notes — note + .section */
+  .note.section { background: #fbfaf3; }
+
+  /* SVG sketchy elements */
+  svg .stroke { stroke: var(--ink); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  svg .fill   { fill: var(--ink); }
+
+  /* Timeline note */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: auto;
+    align-items: end;
+  }
+  .timeline .tick {
+    text-align: center;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 6px;
+    font-family: "Kalam", cursive;
+  }
+  .timeline .year {
+    font-weight: 700;
+    font-size: 14px;
+    display: block;
+  }
+  .timeline .lbl {
+    font-size: 11px;
+    line-height: 1.15;
+    color: var(--ink-soft);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Flow arrows note */
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 21px;
+    flex: 1;
+    align-content: center;
+  }
+  .flow .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 6px;
+  }
+
+  /* code-ish */
+  code {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    background: #f3f0e6;
+    padding: 4px 8px;
+    border-radius: 3px;
+    color: #2a2a2a;
+    display: inline-block;
+  }
+  .cmd { display: flex; flex-direction: column; gap: 8px; }
+
+  ul.dash { list-style: none; padding-left: 4px; }
+  ul.dash li {
+    font-family: "Kalam", cursive;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 14px;
+  }
+  ul.dash li::before {
+    content: "–";
+    position: absolute;
+    left: 0;
+    color: var(--ink);
+  }
+
+  /* Process figures row */
+  .proc-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: auto;
+  }
+  .proc-step { text-align: center; font-family: "Kalam", cursive; }
+  .proc-step .n {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .proc-step .lbl {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* GRID PLACEMENT — explicit so we match the photo */
+  .n-title    { grid-column: 1; grid-row: 1; }
+  .n-history  { grid-column: 2; grid-row: 1; }
+  .n-timeline { grid-column: 3; grid-row: 1; }
+  .n-flow     { grid-column: 4; grid-row: 1; }
+  .n-curve    { grid-column: 5; grid-row: 1; }
+  .n-caps     { grid-column: 6 / span 2; grid-row: 1; }
+
+  .n-getting  { grid-column: 1; grid-row: 2; }
+  .n-cli      { grid-column: 2; grid-row: 2; }
+  .n-kom      { grid-column: 3; grid-row: 2; }
+  .n-kontekst { grid-column: 4; grid-row: 2; }
+  .n-kontekst2{ grid-column: 5; grid-row: 2; }
+  .n-prefs    { grid-column: 6; grid-row: 2; }
+  .n-skills   { grid-column: 7; grid-row: 2; }
+
+  .n-agile    { grid-column: 1; grid-row: 3; }
+  .n-prosess  { grid-column: 2; grid-row: 3; }
+
+  .n-hva      { grid-column: 1; grid-row: 4; }
+
+  .note.section.full { display: flex; flex-direction: column; }
+
+  .caption {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 56px auto 0;
+    font-family: "DM Sans", sans-serif;
+    color: #444;
+    font-size: 13px;
+    line-height: 1.6;
+    border-top: 1px dashed #b8b5ab;
+    padding-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .caption strong { color: #1a1a1a; font-weight: 600; }
+  .caption .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-ico { width: 22px; height: 22px; flex: 0 0 22px; }
+</style>
+</head>
+<body>
+
+  <div class="meta">
+    <span>Agentisk Koding · Hva nå?! · <strong>Kode59 · Haugesund Folkebibliotek · 21. mai 2026, 19:00</strong></span>
+    <span>Whiteboard-sketch · digital rekreasjon</span>
+  </div>
+
+  <div class="board">
+
+    <!-- 1 · TITLE -->
+    <div class="note title-card n-title">
+      <span class="num">1</span>
+      <div class="kicker">Kode 59</div>
+      <h1>Agentisk<br/>Koding</h1>
+      <div class="sub">Hva nå?!</div>
+    </div>
+
+    <!-- 2 · HISTORY (section 1/4) -->
+    <div class="note section n-history">
+      <span class="num">2</span>
+      <div class="row">
+        <svg class="ico" viewBox="0 0 40 40">
+          <circle class="stroke" cx="20" cy="20" r="16" stroke-width="2"/>
+          <path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" class="fill"/>
+        </svg>
+        <div class="mid">Historie<br/>&amp; Bakgrunn</div>
+      </div>
+    </div>
+
+    <!-- 3 · TIMELINE -->
+    <div class="note n-timeline">
+      <span class="num">3</span>
+      <div class="small">[ detalj til hvert<br/>punkt på tidslinjen ]</div>
+      <div class="timeline">
+        <div class="tick"><span class="year">2017</span><span class="lbl">Attention is all you need</span></div>
+        <div class="tick"><span class="year">2022</span><span class="lbl">ChatGPT</span></div>
+        <div class="tick"><span class="year">2024</span><span class="lbl">Tool-use</span></div>
+        <div class="tick"><span class="year">2025</span><span class="lbl">Claude Code · Vibe Coding</span></div>
+        <div class="tick"><span class="year">2026</span><span class="lbl">Hva nå..?</span></div>
+      </div>
+    </div>
+
+    <!-- 4 · FLOW chat→tab→vibes→agentisk -->
+    <div class="note n-flow">
+      <span class="num">4</span>
+      <div class="flow">
+        <div class="cell" style="grid-column:1;grid-row:1;">Chat</div>
+        <div class="cell" style="grid-column:2;grid-row:1;">Tab Complete</div>
+        <div class="cell" style="grid-column:1;grid-row:2;">Vibes</div>
+        <div class="cell" style="grid-column:2;grid-row:2;">Agentisk</div>
+        <svg style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;" viewBox="0 0 200 130" preserveAspectRatio="none">
+          <!-- chat -> tab complete -->
+          <path d="M70 30 C 95 22, 115 22, 130 28" class="stroke" stroke-width="1.8"/>
+          <path d="M125 22 L132 28 L124 32" class="stroke" stroke-width="1.8"/>
+          <!-- tab complete -> agentisk -->
+          <path d="M150 45 C 156 65, 156 85, 150 100" class="stroke" stroke-width="1.8"/>
+          <path d="M145 96 L150 104 L156 98" class="stroke" stroke-width="1.8"/>
+          <!-- chat -> vibes -->
+          <path d="M55 45 C 50 65, 50 85, 55 100" class="stroke" stroke-width="1.8"/>
+          <path d="M50 96 L55 104 L62 98" class="stroke" stroke-width="1.8"/>
+          <!-- vibes -> agentisk -->
+          <path d="M75 110 C 100 116, 115 116, 130 110" class="stroke" stroke-width="1.8"/>
+          <path d="M125 104 L132 110 L125 114" class="stroke" stroke-width="1.8"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 5 · CURVE GRAPH -->
+    <div class="note n-curve">
+      <span class="num">5</span>
+      <svg viewBox="0 0 200 90" style="width:100%; height:70px;">
+        <path d="M10 80 L190 80" class="stroke" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <path d="M10 78 C 60 76, 110 70, 145 50 S 185 12, 192 8" class="stroke" stroke-width="2.2"/>
+        <circle cx="192" cy="8" r="2.5" class="fill"/>
+      </svg>
+      <div class="small">
+        Utviklingen har passert et punkt
+        hvor modellene er <span class="underline">gode <em style="font-style:normal;font-weight:700">nok</em></span> for oppg.
+        med <strong>stor kontekst</strong> og
+        <strong>lang tidshorisont</strong>.
+      </div>
+    </div>
+
+    <!-- 6 · NYE KAPABILITETER -->
+    <div class="note n-caps">
+      <span class="num">6</span>
+      <div style="display:flex; align-items:center; justify-content:space-around; height:100%; gap: 8px;">
+        <div class="mid" style="text-align:center;">Nye<br/>Kapabiliteter</div>
+        <svg width="42" height="60" viewBox="0 0 42 60">
+          <path d="M6 10 C 18 20, 28 30, 36 50" class="stroke" stroke-width="2"/>
+          <path d="M30 46 L36 52 L36 44" class="stroke" stroke-width="2"/>
+        </svg>
+        <div class="mid" style="text-align:center;">Ny UX</div>
+        <svg width="42" height="60" viewBox="0 0 42 60">
+          <path d="M6 10 C 18 20, 28 30, 36 50" class="stroke" stroke-width="2"/>
+          <path d="M30 46 L36 52 L36 44" class="stroke" stroke-width="2"/>
+        </svg>
+        <div class="mid" style="text-align:center;">Ny<br/>arbeidsprosess</div>
+      </div>
+    </div>
+
+    <!-- 7 · GETTING STARTED (section 2/4) -->
+    <div class="note section n-getting">
+      <span class="num">7</span>
+      <div class="row">
+        <svg class="ico" viewBox="0 0 40 40">
+          <circle class="stroke" cx="20" cy="20" r="16" stroke-width="2"/>
+          <path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" class="fill"/>
+          <path d="M36 20 A16 16 0 0 1 20 36 L20 20 Z" class="fill"/>
+        </svg>
+        <div class="mid">Getting Started<br/>+ noen begreper</div>
+      </div>
+    </div>
+
+    <!-- 8 · CLI FTW -->
+    <div class="note n-cli">
+      <span class="num">8</span>
+      <div style="display:flex; align-items:center; justify-content:center; flex:1; flex-direction:column; gap: 2px;">
+        <div style="font-family: 'Caveat',cursive; font-weight:700; font-size:56px; line-height:0.9;">CLI</div>
+        <div style="font-family: 'Caveat',cursive; font-weight:700; font-size:56px; line-height:0.9;">FTW</div>
+      </div>
+    </div>
+
+    <!-- 9 · Kom i gang -->
+    <div class="note n-kom">
+      <span class="num">9</span>
+      <div class="mid underline">Kom i gang</div>
+      <div class="cmd">
+        <code>&gt; curl -fsSL claude.ai/install.sh | sh</code>
+        <code>&gt; claude</code>
+      </div>
+    </div>
+
+    <!-- 10 · KONTEKST -->
+    <div class="note n-kontekst">
+      <span class="num">10</span>
+      <div class="big">Kontekst</div>
+      <ul class="dash">
+        <li>Samtalen</li>
+        <li>Memories</li>
+        <li>CLAUDE.md → DOCS</li>
+        <li>Skills</li>
+      </ul>
+    </div>
+
+    <!-- 11 · KONTEKST memories -->
+    <div class="note n-kontekst2">
+      <span class="num">11</span>
+      <div class="big">Kontekst</div>
+      <div style="display:flex; gap: 8px; align-items:flex-start; margin-top:6px;">
+        <svg width="22" height="60" viewBox="0 0 22 60">
+          <path d="M4 4 L4 56" class="stroke" stroke-width="2"/>
+          <path d="M4 18 L18 18" class="stroke" stroke-width="2"/>
+          <path d="M4 44 L18 44" class="stroke" stroke-width="2"/>
+        </svg>
+        <div style="display:flex; flex-direction:column; gap: 14px; padding-top: 8px;">
+          <div class="mid">Prosjektminne</div>
+          <div class="mid">Brukerminne</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 · Preferanser -->
+    <div class="note n-prefs">
+      <span class="num">12</span>
+      <div class="small" style="font-size:20px; line-height:1.3;">
+        Hva er <em style="font-style:normal; font-weight:700">mine</em> preferanser,
+        og hva er <em style="font-style:normal; font-weight:700">prosjektets</em> preferanser?
+      </div>
+    </div>
+
+    <!-- 13 · SKILLS -->
+    <div class="note n-skills">
+      <span class="num">13</span>
+      <div class="big">Skills</div>
+      <div class="small">
+        [ <em style="font-style:normal; font-weight:700">"Learning-opportunities"</em>
+        som eksempel for å vise oppsett ]
+      </div>
+    </div>
+
+    <!-- 14 · AGILE ♥ AI (section 3/4) -->
+    <div class="note section n-agile">
+      <span class="num">14</span>
+      <div class="row">
+        <svg class="ico" viewBox="0 0 40 40">
+          <circle class="stroke" cx="20" cy="20" r="16" stroke-width="2"/>
+          <path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" class="fill"/>
+          <path d="M36 20 A16 16 0 0 1 20 36 L20 20 Z" class="fill"/>
+          <path d="M20 36 A16 16 0 0 1 4 20 L20 20 Z" class="fill" opacity="0.6"/>
+        </svg>
+        <div class="mid">Agile<br/>♡ AI</div>
+      </div>
+    </div>
+
+    <!-- 15 · Prosess -->
+    <div class="note n-prosess full">
+      <span class="num">15</span>
+      <div class="mid underline">Prosess</div>
+      <div class="proc-row">
+        <div class="proc-step">
+          <div class="n">①</div>
+          <svg width="40" height="34" viewBox="0 0 40 34"><g class="stroke" stroke-width="1.6" fill="none">
+            <circle cx="13" cy="8" r="4"/><path d="M13 13 L13 26 M13 18 L7 30 M13 18 L19 30"/>
+            <circle cx="28" cy="8" r="4"/><path d="M28 13 L28 26 M28 18 L22 30 M28 18 L34 30"/>
+          </g></svg>
+          <span class="lbl">Diskusjon</span>
+        </div>
+        <div class="proc-step">
+          <div class="n">②</div>
+          <svg width="46" height="34" viewBox="0 0 46 34"><g class="stroke" stroke-width="1.6" fill="none">
+            <circle cx="10" cy="8" r="4"/><path d="M10 13 L10 26 M10 18 L5 30 M10 18 L15 30"/>
+            <circle cx="22" cy="8" r="4"/><path d="M22 13 L22 26 M22 18 L17 30 M22 18 L27 30"/>
+            <rect x="32" y="6" width="11" height="14"/><path d="M32 10 L43 10 M37 6 L37 20"/>
+          </g></svg>
+          <span class="lbl">Plan</span>
+        </div>
+        <div class="proc-step">
+          <div class="n">③</div>
+          <svg width="46" height="34" viewBox="0 0 46 34"><g class="stroke" stroke-width="1.6" fill="none">
+            <circle cx="10" cy="8" r="4"/><path d="M10 13 L10 26 M10 18 L5 30 M10 18 L15 30"/>
+            <circle cx="22" cy="8" r="4"/><path d="M22 13 L22 26 M22 18 L17 30 M22 18 L27 30"/>
+            <rect x="32" y="6" width="11" height="14"/><path d="M32 10 L43 10 M37 6 L37 20"/>
+          </g></svg>
+          <span class="lbl">Build</span>
+        </div>
+        <div class="proc-step">
+          <div class="n">④</div>
+          <svg width="34" height="34" viewBox="0 0 34 34"><g class="stroke" stroke-width="1.6" fill="none">
+            <circle cx="10" cy="8" r="4"/><path d="M10 13 L10 26 M10 18 L5 30 M10 18 L15 30"/>
+            <rect x="20" y="6" width="11" height="14"/><path d="M20 10 L31 10 M25 6 L25 20"/>
+          </g></svg>
+          <span class="lbl">Verify</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16 · Hva skjer nå -->
+    <div class="note section n-hva">
+      <span class="num">16</span>
+      <div class="row">
+        <svg class="ico" viewBox="0 0 40 40">
+          <circle class="stroke" cx="20" cy="20" r="16" stroke-width="2"/>
+          <path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" class="fill"/>
+          <path d="M36 20 A16 16 0 0 1 20 36 L20 20 Z" class="fill"/>
+          <path d="M20 36 A16 16 0 0 1 4 20 L20 20 Z" class="fill"/>
+        </svg>
+        <div class="mid">Hva skjer..?<br/>med oss nå</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="caption">
+    <div>
+      <strong>Lest fra whiteboard-en:</strong>
+      4 hovedseksjoner, markert med pai-ikoner som fylles ut mens vi går gjennom talken
+      (Historie → Getting Started → Agile ♡ AI → Hva skjer nå). Lappene under hver seksjon er
+      stikkord/visuelle byggesteiner for slides — ikke ferdige slides.
+    </div>
+    <div>
+      <div class="legend">
+        <div class="legend-item">
+          <svg class="legend-ico" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#1a1a1a" stroke-width="2"/><path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" fill="#1a1a1a"/></svg>
+          1/4
+        </div>
+        <div class="legend-item">
+          <svg class="legend-ico" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#1a1a1a" stroke-width="2"/><path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" fill="#1a1a1a"/><path d="M36 20 A16 16 0 0 1 20 36 L20 20 Z" fill="#1a1a1a"/></svg>
+          2/4
+        </div>
+        <div class="legend-item">
+          <svg class="legend-ico" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#1a1a1a" stroke-width="2"/><path d="M20 4 A16 16 0 0 1 36 20 L20 20 Z" fill="#1a1a1a"/><path d="M36 20 A16 16 0 0 1 20 36 L20 20 Z" fill="#1a1a1a"/><path d="M20 36 A16 16 0 0 1 4 20 L20 20 Z" fill="#1a1a1a"/></svg>
+          3/4
+        </div>
+        <div class="legend-item">
+          <svg class="legend-ico" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#1a1a1a" stroke-width="2"/><circle cx="20" cy="20" r="16" fill="#1a1a1a"/></svg>
+          4/4
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -15,3 +15,6 @@ Thumbs.db
 # ignore only personal/local overrides
 .claude/settings.local.json
 CLAUDE.local.md
+
+# Playwright MCP screenshots/artifacts
+.playwright-mcp/

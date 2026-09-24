@@ -40,4 +40,4 @@ There are exactly as many slides as speaker-notes entries. Today: 32 of each.
 
 ## After any change
 
-Re-run the two counts from "Before any change" and confirm they still match. The PostToolUse hook also checks this automatically, but verify yourself before claiming done.
+The PostToolUse hook (`.claude/hooks/check-deck-sync.py`) re-checks both counts after every edit to the deck.
